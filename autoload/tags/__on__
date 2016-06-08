@@ -1,0 +1,27 @@
+#!/bin/zsh
+# Description:
+#   on tag
+
+local    arg="$1" package
+local -a parsed_zplugs
+local    on
+local    default=""
+
+if [[ -n $arg ]] && ! __zplug::base::base::zpluged "$arg"; then
+    __zplug::io::print::f \
+        --die \
+        --zplug \
+        --func \
+        "$arg: no package managed by zplug\n"
+    return 1
+fi
+
+package="${arg}, ${zplugs[$arg]%, }"
+parsed_zplugs=(${(s/, /)package/,  */, })
+
+on="${parsed_zplugs[(k)on:*]#on:*}"
+if [[ -z $on ]]; then
+    zstyle -s ":zplug:tag" on on
+fi
+
+echo "${on:-$default}"

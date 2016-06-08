@@ -1,0 +1,128 @@
+#!/usr/bin/env zsh
+# Description:
+#   List installed packages (more specifically, view the associative array $zplugs)
+
+local    arg filter repo tag
+local    is_select=false
+local -i ret=0
+local -a repos similar_repos
+local -A copy_zplugs
+
+while (( $# > 0 ))
+do
+    arg="$1"
+    case "$arg" in
+        --select)
+            is_select=true
+            ;;
+        -*|--*)
+            __zplug::io::print::f \
+                --die \
+                --zplug \
+                --func \
+                "$arg: unknown option\n"
+            return 1
+            ;;
+        "")
+            # Invalid
+            return 1
+            ;;
+        */*)
+            # Do not remove the end of the at sign
+            # At the end of the treatment,
+            # get rid of those at displaying to stdout
+            repos+=( "$arg" )
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+    shift
+done
+
+# Initialize
+{
+    # If assosiate array "zplugs" is empty,
+    # it means there are no packages that are managed by zplug
+    if (( $#zplugs == 0 )); then
+        __zplug::io::print::f \
+            --die \
+            --zplug \
+            --func \
+            "no package managed by zplug\n"
+        return 1
+    fi
+
+    if $is_select; then
+        __zplug::utils::shell::search_commands "$ZPLUG_FILTER" \
+            | read filter
+        if [[ -z $filter ]]; then
+            __zplug::io:print:::die \
+                --die \
+                --zplug \
+                --error \
+                "There is no available filter in ZPLUG_FILTER\n"
+            return 1
+        fi
+        repos=( ${(@f)"$(echo "${(Fk)zplugs[@]}" | eval "$filter")"} )
+
+        # There is no package selected by the filter
+        if (( $#repos == 0 )); then
+            return 0
+        fi
+    fi
+}
+
+if (( $#repos > 0 )); then
+    copy_zplugs=()
+    for repo in "${repos[@]}"
+    do
+        if __zplug::core::core::zpluged "$repo"; then
+            # It's already managed
+            copy_zplugs+=(
+            "$repo"
+            "${zplugs[$repo]}"
+            )
+        else
+            # It doesn't managed yet
+            # Try to search the package with fuzzy match
+            similar_repos=( ${(@f)"$(awk -v repo=$repo '$1 ~ repo' <<<${(Fk)zplugs[@]})"} )
+            # There is even no similar package
+            if (( $#similar_repos == 0 )); then
+                copy_zplugs+=(
+                "$repo"
+                "NO SUCH PACKAGE"
+                )
+                ret=1
+            fi
+            for repo in "${similar_repos[@]}"
+            do
+                if __zplug::core::core::zpluged "$repo"; then
+                    copy_zplugs+=(
+                    "$repo"
+                    "${zplugs[$repo]}"
+                    )
+                fi
+            done
+        fi
+    done
+else
+    copy_zplugs=( "${(@kv)zplugs[@]}" )
+fi
+
+dq='"'
+dq="$(print -nP -- "%F{000}$dq%f")"
+for copy in "${(k)copy_zplugs[@]:gs:@::}"
+do
+    tag="nil"
+    if [[ -n $copy_zplugs[$copy] ]]; then
+        echo "$copy_zplugs[$copy]" \
+            | sed 's/$/'"$dq"'/g; s/:/:'"$dq"'/g; s/, /'"$dq"', /g;' \
+            | read tag
+    fi
+    printf "%s  =>  %s\n" \
+        "$fg[green]$copy$reset_color" \
+        "$tag"
+done
+
+return $ret

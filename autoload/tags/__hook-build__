@@ -1,0 +1,27 @@
+#!/bin/zsh
+# Description:
+#   hook-build tag
+
+local    arg="$1" package
+local -a parsed_zplugs
+local    hook_build
+local    default=""
+
+if [[ -n $arg ]] && ! __zplug::base::base::zpluged "$arg"; then
+    __zplug::io::print::f \
+        --die \
+        --zplug \
+        --func \
+        "$arg: no package managed by zplug\n"
+    return 1
+fi
+
+package="${arg}, ${zplugs[$arg]%, }"
+parsed_zplugs=(${(s/, /)package/,  */, })
+
+hook_build="${parsed_zplugs[(k)hook-build:*]#hook-build:*}"
+if [[ -z $hook_build ]]; then
+    zstyle -s ":zplug:tag" hook-build hook_build
+fi
+
+echo "${hook_build:-$default}"

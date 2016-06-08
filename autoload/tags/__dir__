@@ -1,0 +1,42 @@
+#!/bin/zsh
+# Description:
+#   dir tag
+
+local    arg="${1:gs:@::}" package
+local -a parsed_zplugs
+local    dir
+local    default="$ZPLUG_REPOS/$arg"
+
+if [[ -n $arg ]] && ! __zplug::base::base::zpluged "$arg"; then
+    __zplug::io::print::f \
+        --die \
+        --zplug \
+        --func \
+        "$arg: no package managed by zplug\n"
+    return 1
+fi
+
+package="${arg}, ${zplugs[$arg]%, }"
+parsed_zplugs=(${(s/, /)package/,  */, })
+
+dir="${parsed_zplugs[(k)dir:*]#dir:*}"
+if [[ -z $dir ]]; then
+    zstyle -s ":zplug:tag" dir dir
+fi
+
+local from
+__zplug::core::core::run_interfaces \
+    'from' \
+    "$arg" \
+    | read from
+
+case "$from" in
+    "oh-my-zsh")
+        dir="$ZPLUG_REPOS/$_ZPLUG_OHMYZSH/$arg"
+        ;;
+    "local")
+        dir="$arg"
+        ;;
+esac
+
+echo ${~dir:-$default}

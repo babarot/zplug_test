@@ -1,0 +1,27 @@
+#!/bin/zsh
+# Description:
+#   hook-load tag
+
+local    arg="$1" package
+local -a parsed_zplugs
+local    hook_load
+local    default=""
+
+if [[ -n $arg ]] && ! __zplug::base::base::zpluged "$arg"; then
+    __zplug::io::print::f \
+        --die \
+        --zplug \
+        --func \
+        "$arg: no package managed by zplug\n"
+    return 1
+fi
+
+package="${arg}, ${zplugs[$arg]%, }"
+parsed_zplugs=(${(s/, /)package/,  */, })
+
+hook_load="${parsed_zplugs[(k)hook-load:*]#hook-load:*}"
+if [[ -z $hook_load ]]; then
+    zstyle -s ":zplug:tag" hook-load hook_load
+fi
+
+echo "${hook_load:-$default}"
