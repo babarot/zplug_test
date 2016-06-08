@@ -1,0 +1,38 @@
+#!/bin/zsh
+
+local    arg="$1" package
+local -a parsed_zplugs
+local    nice
+local -i default=0
+
+if [[ -n $arg ]] && ! __zplug::base::base::zpluged "$arg"; then
+    __zplug::io::print::die \
+        "[zplug] $arg: no package managed by zplug\n"
+    return 1
+fi
+
+package="${arg}, ${zplugs[$arg]%, }"
+parsed_zplugs=(${(s/, /)package/,  */, })
+
+nice="${parsed_zplugs[(k)nice:*]#nice:*}"
+if [[ -z $nice ]]; then
+    zstyle -s ":zplug:tag" nice nice
+fi
+
+if [[ $arg == $_ZPLUG_OHMYZSH ]] && [[ $nice == 0 ]]; then
+    nice=-10
+fi
+
+: ${nice:=$default}
+if [[ $nice =~ ^[-+]?[[:digit:]]+$ ]] && \
+    (( $nice >= -20 )) && (( $nice <= 19 )); then
+    :
+else
+    __zplug::io::print::die \
+        "[zplug] $fg[red]ERROR$reset_color: "
+    __zplug::io::print::die \
+        "nice tag must be {-20..19} ($fg[green]$arg$reset_color)\n"
+    return 1
+fi
+
+echo "$nice"

@@ -1,0 +1,1 @@
+:us: [:jp:](./doc/guide/README.ja.md)

@@ -1,0 +1,5 @@
+#!/bin/zsh
+
+__zplug::io::print::put "$_ZPLUG_VERSION\n"
+
+return 0

@@ -1,0 +1,32 @@
+#!/usr/bin/env zsh
+
+local arg
+
+while (( $# > 0 ))
+do
+    arg="$1"
+    case "$arg" in
+        -*|--*)
+            __zplug::io::print::die \
+                "$arg: unknown option\n"
+            return 1
+            ;;
+        "")
+            # Invalid
+            return 1
+            ;;
+        */*)
+            # Unexpect
+            return 1
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+    shift
+done
+
+rm -f \
+    "$ZPLUG_CACHE_FILE" \
+    "$ZPLUG_HOME/zcompdump" \
+    "$ZPLUG_HOME/zcompdump.zwc"

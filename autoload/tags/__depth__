@@ -1,0 +1,56 @@
+#!/bin/zsh
+
+local    arg="$1" package
+local -a parsed_zplugs
+local    depth
+local -i default=0
+
+if [[ -n $arg ]] && ! __zplug::base::base::zpluged "$arg"; then
+    __zplug::io::print::die \
+        "[zplug] $arg: no package managed by zplug\n"
+    return 1
+fi
+
+package="${arg}, ${zplugs[$arg]%, }"
+parsed_zplugs=(${(s/, /)package/,  */, })
+
+depth="${parsed_zplugs[(k)depth:*]#depth:*}"
+if [[ -z $depth ]]; then
+    zstyle -s ":zplug:tag" depth depth
+fi
+
+: ${depth:=$default}
+
+case $depth in
+    0)
+        case "$ZPLUG_CLONE_DEPTH" in
+            0)
+                #depth_option=""
+                :
+                ;;
+            <->)
+                #depth_option="--depth=$ZPLUG_CLONE_DEPTH"
+                depth="$ZPLUG_CLONE_DEPTH"
+                ;;
+            *)
+                __zplug::io::print::die \
+                    "[zplug] $fg[red]ERROR$reset_color: ZPLUG_CLONE_DEPTH must be a positive number.\n"
+                return 1
+                ;;
+        esac
+        ;;
+    <->)
+        #depth_option="--depth=$tag_depth"
+        :
+        ;;
+    *)
+        # not integer
+        __zplug::io::print::die \
+            "[zplug] $fg[red]ERROR$reset_color: depth tag must be a positive number\n"
+        __zplug::io::print::die \
+            "        but, if zero, no shallow clone.\n"
+        return 1
+        ;;
+esac
+
+echo "$depth"

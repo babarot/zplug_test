@@ -1,0 +1,141 @@
+#!/usr/bin/env zsh
+
+local -a queue
+local -i queue_max=$ZPLUG_THREADS
+local -F SECONDS=0
+local -A tags
+local -i max=0 dif=0
+local    is_releases=false is_select=false
+local    state arg filter
+local -a repos
+
+while (( $# > 0 ))
+do
+    arg="$1"
+    case "$arg" in
+        --select)
+            is_select=true
+            ;;
+        -*|--*)
+            __zplug::io::print::die \
+                "$arg: unknown option\n"
+            return 1
+            ;;
+        "")
+            # Invalid
+            return 1
+            ;;
+        */*)
+            repos+=( "${arg:gs:@::}" )
+            return 1
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+    shift
+done
+
+# Initialize
+{
+    if $is_select; then
+        __zplug::utils::shell::search_commands \
+            "$ZPLUG_FILTER" \
+            | read filter
+        if [[ -z $filter ]]; then
+            __zplug::io::die \
+                "[zplug] ERROR: There is no available filter in ZPLUG_FILTER\n"
+            return 1
+        fi
+        repos=( ${(@f)"$(echo "${(Fk)zplugs[@]}" | eval "$filter")"} )
+
+        # Cace of type Ctrl-C
+        if (( $#repos == 0 )); then
+            return 0
+        fi
+    fi
+
+    if (( $#repos == 0 )); then
+        repos=( "${(k)zplugs[@]:gs:@::}" )
+    fi
+
+    for repo in "${repos[@]}"
+    do
+        (( $#repo > $max )) && max=$#repo
+    done
+    max=$(( $max + 1 ))
+}
+
+if (( $#repos > 0 )); then
+    __zplug::io::print::put "Fetching the status of packages ...\n"
+    __zplug::io::print::put "Packages with from:'local' are skipped.\n"
+    __zplug::io::print::put "===\n"
+
+    __zplug::job::spinner::lock
+    __zplug::job::spinner::spin &
+fi
+
+for repo in "${repos[@]}"
+do
+    __zplug::core::tags::parse "$repo"
+    tags=( "${reply[@]}" )
+
+    case "$tags[from]" in
+        "local")
+            is_releases=false
+            continue
+            ;;
+        "gh-r")
+            is_releases=true
+            ;;
+        *)
+            is_releases=false
+            ;;
+    esac
+
+    if [[ ! -d $tags[dir] ]]; then
+        shift repos
+        continue
+    fi
+
+    # Get package status in subprocess
+    {
+        trap '__zplug::job::spinner::unlock; trap - SIGINT' SIGINT
+
+        # Change directory to get the remote status
+        builtin cd -q \
+            "$tags[dir]" \
+            &>/dev/null
+
+        if (( $status == 0 )); then
+            # Get the status of the repository (whether it is a latest)
+            if $is_releases; then
+                __zplug::utils::releases::get_state "$tags[name]" "$tags[dir]"
+            else
+                __zplug::utils::git::get_state "$tags[name]" "$tags[dir]"
+            fi \
+                | awk '{print $1}' \
+                | read state
+
+            # Adjust space sizes
+            dif=$(( $max - $#repo ))
+            __zplug::job::spinner::echo "${(%):-"%U"}%-${#repo}s${(%):-"%u"}%${dif}s %s\n" \
+                "$repo" \
+                "" \
+                "$state"
+        fi
+    } &
+    __zplug::job::queue::enqueue "$!"
+    __zplug::job::queue::wait
+done
+
+if (( $#repos > 0 )); then
+    __zplug::job::queue::wait_all
+    __zplug::job::spinner::unlock
+
+    __zplug::io::print::put "===\n"
+    __zplug::io::print::put "Finished %.6f\n" $SECONDS
+    __zplug::io::print::put "\n"
+fi
+
+return 0

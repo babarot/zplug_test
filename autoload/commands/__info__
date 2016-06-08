@@ -1,0 +1,57 @@
+#!/bin/zsh
+
+local    arg="$1" repo key
+local -a repos
+local -A tags
+
+while (( $# > 0 ))
+do
+    arg="$1"
+    case "$arg" in
+        -*|--*)
+            __zplug::io::print::die \
+                "$arg: unknown option\n"
+            return 1
+            ;;
+        "")
+            # Invalid
+            return 1
+            ;;
+        */*)
+            repos+=( "${arg:gs:@::}" )
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+    shift
+done
+
+# If no argument is given
+if (( $#repos == 0 )); then
+    __zplug::io::print::put \
+        "%d plugs, %s\n" \
+        $#zplugs \
+        $(du -ch "$ZPLUG_REPOS" | awk '$2 == "total"{print $1}')
+    return 1
+fi
+
+for repo in "${repos[@]}"
+do
+    if ! __zplug::base::base::zpluged "$repo"; then
+        __zplug::io::print::die \
+            "[zplug] info: $repo is not a managed package\n"
+        return 1
+    fi
+
+    __zplug::core::tags::parse "$repo"
+    tags=( "${reply[@]}" )
+
+    for key in "${(k)tags[@]}"
+    do
+        __zplug::io::print::put \
+            "$fg[red]-$reset_color $fg[blue]$key$reset_color: "
+        __zplug::io::print::put \
+            "$fg[yellow]${(qqq)tags[$key]}$reset_color\n"
+    done
+done

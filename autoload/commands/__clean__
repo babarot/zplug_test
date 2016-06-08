@@ -1,0 +1,110 @@
+#!/usr/bin/env zsh
+
+local    repo filter
+local    is_force="" is_select=false
+local -a repos remove_repos
+local -A tags
+local -i ret=0
+
+while (( $# > 0 ))
+do
+    arg="$1"
+    case "$arg" in
+        --force)
+            is_force=true
+            ;;
+        --select)
+            is_select=true
+            ;;
+        -*|--*)
+            __zplug::io::print::die \
+                "$arg: unknown option\n"
+            return 1
+            ;;
+        "")
+            # Invalid
+            return 1
+            ;;
+        */*)
+            repos+=( "${arg:gs:@::}" )
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+    shift
+done
+
+if $is_select; then
+    __zplug::utils::shell::search_commands \
+        "$ZPLUG_FILTER" \
+        | read filter
+    if [[ -z $filter ]]; then
+        __zplug::io::die \
+            "[zplug] ERROR: There is no available filter in ZPLUG_FILTER\n"
+        return 1
+    fi
+    repos=( ${(@f)"$(echo "${(Fk)zplugs[@]}" | eval "$filter")"} )
+
+    # Cace of type Ctrl-C
+    if (( $#repos == 0 )); then
+        return 0
+    fi
+fi
+
+if (( $#repos == 0 )); then
+    # If no argument is given:
+    #   search the repositories that have not been already managed by zplug
+    repos=( "$ZPLUG_REPOS"/*/*(N-/) )
+    for repo in "${repos[@]}"
+    do
+        if ! __zplug::base::base::zpluged "${repo:h:t}/${repo:t}"; then
+            remove_repos+=("$repo")
+        fi
+    done
+else
+    # If the arguments are given or selected by the filter
+    for repo in "${repos[@]}"
+    do
+        tags[dir]="$(__zplug::core::core::run_interfaces 'dir' "$repo")"
+        if [[ -d $tags[dir] ]]; then
+            case "$tags[from]" in
+                "oh-my-zsh")
+                    remove_repos+=( "$ZPLUG_REPOS/$_ZPLUG_OHMYZSH" )
+                    ;;
+                *)
+                    remove_repos+=( "$tags[dir]" )
+                    ;;
+            esac
+        else
+            __zplug::io::print::die \
+                "[zplug] $repo: no such package\n"
+            ret=1
+        fi
+    done
+fi
+
+# Remove packages from $ZPLUG_REPOS
+for repo in "${remove_repos[@]}"
+do
+    __zplug::io::print::put \
+        "${${is_force:+"Removed"}:-"Remove? (y/N)"} ${(qq)repo} "
+
+    if ${(z)is_force:-"read -q"}; then
+        rm -rf "$repo"
+        rmdir "${repo:h}"
+    fi &>/dev/null
+
+    __zplug::io::print::put "\n"
+done
+
+# Remove packages from $zplugs
+for repo in "${(k)zplugs[@]}"
+do
+    tags[dir]="$(__zplug::core::core::run_interfaces 'dir' "$repo")"
+    if [[ ! -d $tags[dir] ]]; then
+        unset "zplugs[$repo]"
+    fi
+done
+
+return $ret

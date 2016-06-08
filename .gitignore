@@ -1,0 +1,25 @@
+# zplug
+bin/*
+!bin/zplug-env
+repos
+.cache
+.ignore
+
+# zsh
+zcompdump
+zcompdump.zwc
+**/zcompdump
+**/zcompdump.zwc
+
+# a2x (man page)
+*.xml
+**/*.xml
+# vim
+*~
+**/*~
+*.swp
+**/*.swp
+
+# OS X
+.DS_Store
+**/.DS_Store

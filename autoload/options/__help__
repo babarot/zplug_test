@@ -1,0 +1,59 @@
+#!/bin/zsh
+
+local    f  arg
+local -a fs args
+
+while (( $# > 0 ))
+do
+    arg="$1"
+    case "$arg" in
+        -*|--*)
+            break
+            ;;
+        *)
+            fs=( "$(echo $ZPLUG_HOME/doc/man/man(1|5)/(zplug-|)${arg}.(1|5)(N))" )
+            # Non-existing man page
+            if [[ $fs[1] == "" ]]; then
+                __zplug::io::print::die "[zplug] $arg: no such subcommand or tag\n"
+                return 1
+            fi
+            # List all hits pages
+            for f in "${fs[@]}"
+            do
+                if [[ -f $f ]]; then
+                    args+=( "$f" )
+                fi
+            done
+            ;;
+    esac
+    shift
+done
+
+if (( $#args > 0 )); then
+    man "${args[@]}"
+    return $status
+fi
+
+_ZPLUG_HELP="usage: zplug [COMMANDS] [OPTIONS]
+  zplug is a next-generation plugin manager for zsh 
+
+OPTIONS:
+  --help     Display the help message
+  --version  Display the version of zplug
+
+COMMANDS:
+  install    Install packages in parallel
+  load       Source installed plugins and add installed commands to \$PATH
+  list       List installed packages (more specifically, view the associative array \$zplugs)
+  update     Update installed packages in parallel
+  check      Return true if all packages are installed, false otherwise
+  status     Check if the remote repositories are up to date
+  clean      Remove repositories which are no longer managed
+  clear      Remove the cache file
+  info       Show the information such as the source URL and tag values for the given package
+
+For more information, see also ${(%):-"%U"}$_ZPLUG_URL${(%):-"%u"}."
+
+__zplug::io::print::die "$_ZPLUG_HELP\n"
+
+return 1

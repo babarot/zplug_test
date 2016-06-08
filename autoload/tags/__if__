@@ -1,0 +1,22 @@
+#!/bin/zsh
+
+local    arg="$1" package
+local -a parsed_zplugs
+local    if
+local    default=""
+
+if [[ -n $arg ]] && ! __zplug::base::base::zpluged "$arg"; then
+    __zplug::io::print::die \
+        "[zplug] $arg: no package managed by zplug\n"
+    return 1
+fi
+
+package="${arg}, ${zplugs[$arg]%, }"
+parsed_zplugs=(${(s/, /)package/,  */, })
+
+if="${parsed_zplugs[(k)if:*]#if:*}"
+if [[ -z $if ]]; then
+    zstyle -s ":zplug:tag" if if
+fi
+
+echo "${if:-$default}"

@@ -1,0 +1,64 @@
+#!/usr/bin/env zsh
+
+local     is_verbose=false
+local     arg repo
+local -aU repos not_installed_repos
+local -A  tags
+
+while (( $# > 0 ))
+do
+    arg="$1"
+    case "$arg" in
+        --verbose)
+            is_verbose=true
+            ;;
+        -*|--*)
+            __zplug::io::print::die \
+                "$arg: unknown option\n"
+            return 1
+            ;;
+        "")
+            # Invalid
+            return 1
+            ;;
+        */*)
+            repos+=( "${arg:gs:@::}" )
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+    shift
+done
+
+if (( $#repos == 0 )); then
+    repos=( "${(k)zplugs[@]:gs:@::}" )
+fi
+
+for repo in "${repos[@]}"
+do
+    tags[from]="$(__zplug::core::core::run_interfaces 'from' "$repo")"
+    if __zplug::base::base::is_handler_defined check "$tags[from]"; then
+        __zplug::base::base::use_handler check "$tags[from]" "$repo"
+
+        if (( $status != 0 )); then
+            not_installed_repos+=( "$repo" )
+        fi
+    fi
+done
+
+if (( $#not_installed_repos > 0 )); then
+    # Share not installed repos information
+    # e.g. for __install__ command
+    reply=( "${not_installed_repos[@]}" )
+
+    if $is_verbose; then
+        __zplug::io::print::put \
+            "- $fg[red]%s$reset_color: not installed\n" \
+            "${not_installed_repos[@]}"
+    fi
+
+    return 1
+fi
+
+return 0

@@ -1,0 +1,275 @@
+#!/bin/zsh
+
+local    is_verbose=false
+local -a repos
+local    repo
+local -A tags
+
+local    arg pkg
+local    ignore
+local -A load_commands
+local -a unsorted_repos
+
+local -a load_plugins load_fpaths lazy_plugins nice_plugins
+local -a ignore_patterns load_patterns
+
+local -A reply_hash
+local -A hook_load
+local -a failed_packages hook_load_cmds
+
+while (( $# > 0 ))
+do
+    arg="$1"
+    case "$arg" in
+        --verbose)
+            is_verbose=true
+            ;;
+        -*|--*)
+            __zplug::io::print::die \
+                "$arg: unknown option\n"
+            return 1
+            ;;
+        "")
+            # Invalid
+            return 1
+            ;;
+        */*)
+            repos+=( "${arg:gs:@::}" )
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+    shift
+done
+
+# Use cache file
+if __zplug::io::cache::load; then
+    return 0
+fi
+
+repos=(
+    "${(k)zplugs[@]}"
+)
+
+# Order by nice value
+for repo in "${repos[@]}"
+do
+    tags[nice]="$(__zplug::core::core::run_interfaces 'nice' "$repo")"
+    unsorted_repos+=( "$tags[nice]:$repo" )
+done
+
+# Sorting...
+for repo in \
+    ${${(OnM)unsorted_repos:#-*}#*:} \
+    ${${(on)unsorted_repos:#-*}#*:}
+do
+    __zplug::core::tags::parse "$repo"
+    tags=( "${reply[@]}" )
+
+    # Packages to skip loading
+    {
+        # FROM tag
+        if __zplug::base::base::is_handler_defined check "$tags[from]"; then
+            if ! __zplug::base::base::use_handler check "$tags[from]" "$repo"; then
+                continue
+            fi
+        else
+            if [[ ! -d $tags[dir] ]]; then
+                continue
+            fi
+        fi
+
+        # IF tag
+        if [[ -n $tags[if] ]]; then
+            if ! eval "$tags[if]" &>/dev/null; then
+                $is_verbose && __zplug::io::print::die "$tags[name]: (not loaded)\n"
+                continue
+            fi
+        fi
+
+        # ON tag
+        if [[ -n $tags[on] ]]; then
+            if [[ ! -d $ZPLUG_REPOS/${~tags[on]} ]]; then
+                $is_verbose && __zplug::io::print::die "$tags[name]: (not loaded)\n"
+                continue
+            fi
+        fi
+    }
+
+    # Switch to the revision specified by its tags
+    __zplug::utils::git::checkout "$repo"
+
+    case $tags[as] in
+        "command")
+            if __zplug::base::base::is_handler_defined "load_command" "$tags[from]"; then
+                __zplug::base::base::use_handler \
+                    "load_command" \
+                    "$tags[from]" \
+                    "$repo"
+                reply_hash=( "$reply[@]" )
+
+                load_fpaths+=( ${(@f)reply_hash[load_fpaths]} )
+                for pair in ${(@f)reply_hash[load_commands]}
+                do
+                    # Each line (pair) is null character-separated
+                    load_commands+=( ${(@s:\0:)pair} )
+                done
+            fi
+            ;;
+
+        "plugin")
+            load_patterns=()
+
+            if __zplug::base::base::is_handler_defined "load_plugin" "$tags[from]"; then
+                # Custom handler for loading
+                __zplug::base::base::use_handler \
+                    "load_plugin" \
+                    "$tags[from]" \
+                    "$repo"
+                reply_hash=( "$reply[@]" )
+
+                load_fpaths+=( ${(@f)reply_hash[load_fpaths]} )
+                load_patterns+=( ${(@f)reply_hash[load_patterns]} )
+                load_plugins+=( ${(@f)reply_hash[load_plugins]} )
+                nice_plugins+=( ${(@f)reply_hash[nice_plugins]} )
+            fi
+            ;;
+
+        *)
+            __zplug::io::print::die \
+                "$tags[as]: as:value must be either command or plugin\n"
+            return 1
+            ;;
+    esac
+
+    if [[ -n $tags[ignore] ]]; then
+        # Make ignore patterns
+        if [[ $tags[from] == "oh-my-zsh" ]]; then
+            ignore_patterns=( $(zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo $ZPLUG_REPOS/$_ZPLUG_OHMYZSH/${~tags[ignore]}" 2>/dev/null)(N) )
+        else
+            ignore_patterns=( $(zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo ${tags[dir]}/${~tags[ignore]}" 2>/dev/null)(N) )
+        fi
+
+        for ignore in "${ignore_patterns[@]}"
+        do
+            # Commands
+            if [[ -n $load_commands[(i)$ignore] ]]; then
+                unset "load_commands[$ignore]"
+            fi
+            # Plugins
+            load_plugins=( "${(R)load_plugins[@]:#$ignore}" )
+            nice_plugins=( "${(R)nice_plugins[@]:#$ignore}" )
+            lazy_plugins=( "${(R)lazy_plugins[@]:#$ignore}" )
+            # fpath
+            load_fpaths=( "${(R)load_fpaths[@]:#$ignore}" )
+        done
+    fi
+
+    # hook after load
+    if [[ -n $tags[hook-load] ]]; then
+        hook_load+=(
+            "$tags[name]"
+            "$tags[hook-load]"
+        )
+    fi
+done
+
+# Commands
+{
+    for pkg in "${(k)load_commands[@]}"
+    do
+        if [[ -f $pkg ]]; then
+            chmod a=rx "$pkg" && ln -snf "$pkg" "$load_commands[$pkg]"
+            if (( $status == 0 )); then
+                $is_verbose && \
+                    __zplug::io::print::put \
+                    "$fg[green]  Linked$reset_color %s to ${(%):-"%B"}%s${(%):-"%b"}\n" \
+                    "${pkg#$ZPLUG_REPOS/}" \
+                    "$load_commands[$pkg]"
+            else
+                failed_packages+=("$pkg")
+            fi
+        fi
+    done
+
+    path=(
+        "$ZPLUG_HOME/bin"
+        "${path[@]}"
+    )
+}
+
+# Plugins
+{
+    # Normal plugins
+    for pkg in "${(u)load_plugins[@]}"
+    do
+        if [[ -f $pkg ]]; then
+            source "$pkg"
+            if (( $status == 0 )); then
+                $is_verbose && \
+                    __zplug::io::print::put \
+                    "$fg[green]  Loaded$reset_color ${pkg#$ZPLUG_REPOS/}\n"
+            else
+                failed_packages+=("$pkg")
+            fi
+        else
+            load_plugins[$load_plugins[(i)$pkg]]=()
+        fi
+    done
+
+    # NOTE: set fpath before compinit
+    fpath=(
+    "${(u)load_fpaths[@]}"
+    "${fpath[@]}"
+    )
+    compinit -C -d "$ZPLUG_HOME/zcompdump"
+
+    {
+        zcompile "$ZPLUG_HOME/zcompdump"
+    } &!
+
+    # Nice plugins
+    for pkg in "${nice_plugins[@]}"
+    do
+        if [[ -f $pkg ]]; then
+            source "$pkg"
+            if (( $status == 0 )); then
+                if $is_verbose; then
+                    __zplug::io::print::put "$fg[green]  Loaded$reset_color ${pkg#$ZPLUG_REPOS/}"
+                    __zplug::io::print::put "$fg[yellow] after compinit$reset_color\n"
+                fi
+            else
+                failed_packages+=("$pkg")
+            fi
+        else
+            nice_plugins[$nice_plugins[(i)$pkg]]=()
+        fi
+    done
+
+    # Lazy plugins
+    for pkg in "${lazy_plugins[@]}"
+    do
+        autoload -Uz "${pkg:t}"
+    done
+}
+
+# Hooks after load
+for repo in "${(k)hook_load[@]}"
+do
+    # Skip the execution of the hook
+    # if the loading of the repo is failed
+    if (( $failed_packages[(I)$repo] )); then
+        continue
+    fi
+
+    __zplug::job::hook::load "$repo"
+
+    # for cache
+    hook_load_cmds+=( "$hook_load[$repo]" )
+done
+
+# Cache in background
+{
+    __zplug::io::cache::update
+} &!

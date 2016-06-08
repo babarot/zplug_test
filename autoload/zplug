@@ -1,0 +1,29 @@
+#!/bin/zsh
+
+local \
+    first="$1" \
+    second="$2"
+
+case "$first" in
+    -* | --*)
+        __zplug::core::options::parse "$argv[@]"
+        ;;
+
+    check | install | update | list | clean | status | clear | load | info)
+        __${first}__ ${second:+"$argv[2,-1]"}
+        ;;
+
+    */*)
+        __zplug::core::add::to_zplugs "$argv[@]"
+        ;;
+
+    "")
+        __zplug::core::arguments::none
+        ;;
+
+    *)
+        __zplug::core::arguments::exec "$argv[@]"
+        ;;
+esac
+
+return $status
