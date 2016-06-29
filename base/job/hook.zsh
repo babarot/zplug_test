@@ -20,8 +20,11 @@ __zplug::job::hook::service()
 
         eval "$tags[$hook]" 2>/dev/null
         if (( $status != 0 )); then
-            __zplug::io::print::die \
-                "[zplug] ERROR: '%s' failed" \
+            __zplug::io::print::f \
+                --die \
+                --zplug \
+                --error \
+                "'%s' failed\n" \
                 "$tags[$hook]"
         fi
         )

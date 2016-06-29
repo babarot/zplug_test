@@ -35,8 +35,11 @@ __zplug::sources::gist::clone()
     esac
 
     if [[ -z $url_format ]]; then
-        __zplug::io::print::die \
-            "[zplug] $fg[red]ERROR$reset_color: $repo is an invalid 'user/repo' format.\n"
+        __zplug::io::print::f \
+            --die \
+            --zplug \
+            --error \
+            "$repo is an invalid 'user/repo' format.\n"
         return 1
     fi
 

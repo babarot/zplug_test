@@ -6,8 +6,10 @@ local    nice
 local -i default=0
 
 if [[ -n $arg ]] && ! __zplug::base::base::zpluged "$arg"; then
-    __zplug::io::print::die \
-        "[zplug] $arg: no package managed by zplug\n"
+    __zplug::io::print::f \
+        --die \
+        --zplug \
+        "$arg: no package managed by zplug\n"
     return 1
 fi
 
@@ -28,9 +30,10 @@ if [[ $nice =~ ^[-+]?[[:digit:]]+$ ]] && \
     (( $nice >= -20 )) && (( $nice <= 19 )); then
     :
 else
-    __zplug::io::print::die \
-        "[zplug] $fg[red]ERROR$reset_color: "
-    __zplug::io::print::die \
+    __zplug::io::print::f \
+        --die \
+        --zplug \
+        --error \
         "nice tag must be {-20..19} ($fg[green]$arg$reset_color)\n"
     return 1
 fi

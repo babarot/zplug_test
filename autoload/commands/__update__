@@ -58,8 +58,11 @@ done
             "$ZPLUG_FILTER" \
             | read filter
         if [[ -z $filter ]]; then
-            __zplug::io::die \
-                "[zplug] ERROR: There is no available filter in ZPLUG_FILTER\n"
+            __zplug::io::print::f \
+                --die \
+                --zplug \
+                --error \
+                "There is no available filter in ZPLUG_FILTER\n"
             return 1
         fi
         repos=( ${(@f)"$(echo "${(Fk)zplugs[@]}" | eval "$filter")"} )
@@ -88,8 +91,10 @@ do
     #repo="$(__zplug::base::base::packaging "$repo")"
 
     if ! __zplug::base::base::zpluged "$repo"; then
-        __zplug::io::print::die \
-            "[zplug] $fg[red]ERROR$reset_color: " \
+        __zplug::io::print::f \
+            --die \
+            --zplug \
+            --error \
             "$repo: no such package\n"
         return 1
     fi

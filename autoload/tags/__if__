@@ -6,8 +6,10 @@ local    if
 local    default=""
 
 if [[ -n $arg ]] && ! __zplug::base::base::zpluged "$arg"; then
-    __zplug::io::print::die \
-        "[zplug] $arg: no package managed by zplug\n"
+    __zplug::io::print::f \
+        --die \
+        --zplug \
+        "$arg: no package managed by zplug\n"
     return 1
 fi
 

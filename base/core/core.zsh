@@ -48,9 +48,12 @@ __zplug::core::core::variable()
     #_zplug_tag_pattern=( "${reply[@]}" )
 
     if (( $+ZPLUG_SHALLOW )); then
-        __zplug::io::print::die \
-            "[zplug] $fg[red]${(%):-"%U"}WARNING${(%):-"%u"}$reset_color: ZPLUG_SHALLOW is deprecated. "
-        __zplug::io::print::die \
+        __zplug::io::print::f \
+            --raw \
+            --die \
+            --zplug \
+            --warn \
+            "ZPLUG_SHALLOW is deprecated. " \
             "Please use 'export ZPLUG_CLONE_DEPTH=1' instead.\n"
     fi
 

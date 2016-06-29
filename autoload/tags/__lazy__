@@ -6,8 +6,10 @@ local    lazy
 local    default="no"
 
 if [[ -n $arg ]] && ! __zplug::base::base::zpluged "$arg"; then
-    __zplug::io::print::die \
-        "[zplug] $arg: no package managed by zplug\n"
+    __zplug::io::print::f \
+        --die \
+        --zplug \
+        "$arg: no package managed by zplug\n"
     return 1
 fi
 
@@ -28,9 +30,10 @@ if [[ -z $lazy ]]; then
                 # ok (false words)
                 :
             else
-                __zplug::io::print::die \
-                    "[zplug] $fg[red]ERROR$reset_color: "
-                __zplug::io::print::die \
+                __zplug::io::print::f \
+                    --die \
+                    --zplug \
+                    --error \
                     "lazy tag must be a boolean ($fg[green]$arg$reset_color)\n"
                 return 1
             fi
@@ -45,9 +48,10 @@ fi
 if [[ $lazy =~ ^("${(j:|:)_zplug_boolean_true[@]}|${(j:|:)_zplug_boolean_false[@]}")$ ]]; then
     :
 else
-    __zplug::io::print::die \
-        "[zplug] $fg[red]ERROR$reset_color: "
-    __zplug::io::print::die \
+    __zplug::io::print::f \
+        --die \
+        --zplug \
+        --error \
         "lazy tag must be a boolean ($fg[green]$arg$reset_color)\n"
     return 1
 fi

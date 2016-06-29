@@ -17,14 +17,20 @@ __zplug::core::add::to_zplugs()
 
     # In the case of "from:local", it accepts multiple slashes
     if [[ ! $name =~ [~$/] ]] && [[ ! $name =~ "^[^/]+/[^/]+$" ]]; then
-        __zplug::io::print::die \
-            "[zplug] ERROR: ${(qq)name} is invalid package name\n"
+        __zplug::io::print::f \
+            --die \
+            --zplug \
+            --error \
+            "${(qq)name} is invalid package name\n"
         return 1
     fi
 
     if __zplug::base::base::is_cli; then
         if __zplug::base::base::zpluged "$name"; then
-            __zplug::io::print::die "[zplug] $name: already managed\n"
+            __zplug::io::print::f \
+                --die \
+                --zplug \
+                "$name: already managed\n"
             return 1
         else
             # Add to the external file
@@ -54,8 +60,10 @@ __zplug::core::add::to_zplugs()
             # Reconstruct
             re_tags+=("$key:$val")
         else
-            __zplug::io::print::die \
-                "[zplug] $tag: $key is invalid tag name\n"
+            __zplug::io::print::f \
+                --die \
+                --zplug \
+                "$tag: $key is invalid tag name\n"
             return 1
         fi
     done

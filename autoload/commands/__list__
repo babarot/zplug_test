@@ -39,7 +39,10 @@ done
     # If assosiate array "zplugs" is empty,
     # it means there are no packages that are managed by zplug
     if (( $#zplugs == 0 )); then
-        __zplug::io::print::die "[zplug] no package managed by zplug\n"
+        __zplug::io::print::f \
+            --die \
+            --zplug \
+            "no package managed by zplug\n"
         return 1
     fi
 
@@ -47,8 +50,11 @@ done
         __zplug::utils::shell::search_commands "$ZPLUG_FILTER" \
             | read filter
         if [[ -z $filter ]]; then
-            __zplug::io::die \
-                "[zplug] ERROR: There is no available filter in ZPLUG_FILTER\n"
+            __zplug::io:print:::die \
+                --die \
+                --zplug \
+                --error \
+                "There is no available filter in ZPLUG_FILTER\n"
             return 1
         fi
         repos=( ${(@f)"$(echo "${(Fk)zplugs[@]}" | eval "$filter")"} )

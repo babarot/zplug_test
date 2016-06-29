@@ -19,8 +19,10 @@ __zplug::sources::local::check()
         fi
     done
 
-    __zplug::io::print::die \
-        "[zplug] no matching file or directory: $tags[dir]\n"
+    __zplug::io::print::f \
+        --die \
+        --zplug \
+        "no matching file or directory: $tags[dir]\n"
     return 1
 }
 
@@ -54,7 +56,10 @@ __zplug::sources::local::load_plugin()
     done
 
     if (( $#load_patterns == 0 )); then
-        __zplug::io::print::die "[zplug] no matching file or directory: $tags[dir]\n"
+        __zplug::io::print::f \
+            --die \
+            --zplug \
+            "no matching file or directory: $tags[dir]\n"
         return 1
     fi
 
@@ -97,7 +102,10 @@ __zplug::sources::local::load_command()
     done
 
     if (( $#load_commands == 0 )); then
-        __zplug::io::print::die "[zplug] no matching file or directory: ${tags[dir]}\n"
+        __zplug::io::print::f \
+            --die \
+            --zplug \
+            "no matching file or directory: ${tags[dir]}\n"
         return 1
     fi
 

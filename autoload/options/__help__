@@ -14,7 +14,10 @@ do
             fs=( "$(echo $ZPLUG_HOME/doc/man/man(1|5)/(zplug-|)${arg}.(1|5)(N))" )
             # Non-existing man page
             if [[ $fs[1] == "" ]]; then
-                __zplug::io::print::die "[zplug] $arg: no such subcommand or tag\n"
+                __zplug::io::print::f \
+                    --die \
+                    --zplug \
+                    "$arg: no such subcommand or tag\n"
                 return 1
             fi
             # List all hits pages

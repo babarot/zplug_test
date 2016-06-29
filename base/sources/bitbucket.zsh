@@ -30,7 +30,10 @@ __zplug::sources::bitbucket::clone()
 
     if [[ -z $url_format ]]; then
         __zplug::io::print::die \
-            "[zplug] $fg[red]ERROR$reset_color: $repo is an invalid 'user/repo' format.\n"
+            --die \
+            --zplug \
+            --error \
+            "$repo is an invalid 'user/repo' format.\n"
         return 1
     fi
 

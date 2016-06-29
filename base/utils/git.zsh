@@ -8,8 +8,11 @@ __zplug::utils::git::clone()
     tags[at]="$(__zplug::core::core::run_interfaces 'at' "$repo")"
 
     if [[ ! $ZPLUG_PROTOCOL =~ ^(HTTPS|https|SSH|ssh)$ ]]; then
-        __zplug::io::print::die \
-            "[zplug] $fg[red]ERROR$reset_color: $ZPLUG_PROTOCOL is an invalid protocol.\n"
+        __zplug::io::print::f \
+            --die \
+            --zplug \
+            --error \
+            "ZPLUG_PROTOCOL is an invalid protocol.\n"
         return 1
     fi
 
@@ -30,8 +33,11 @@ __zplug::utils::git::clone()
         } &>/dev/null
 
         if (( $status != 0 )); then
-            __zplug::io::print::die \
-                "[zplug] $fg[red]ERROR$reset_color: pathspec '$tags[at]' (at tag) did not match ($repo)\n"
+            __zplug::io::print::f \
+                --die \
+                --zplug \
+                --error \
+                "pathspec '$tags[at]' (at tag) did not match ($repo)\n"
             ret=1
         fi
         )
@@ -55,13 +61,19 @@ __zplug::utils::git::checkout()
         (
             builtin cd -q "$tags[dir]" &>/dev/null || \
                 builtin cd -q "$tags[dir]:h" &>/dev/null || \
-                __zplug::io::print::die \
-                "[zplug] $fg[red]ERROR$reset_color: no such directory '$tags[dir]' ($repo)\n"
+                __zplug::io::print::f \
+                --die \
+                --zplug \
+                --error \
+                "no such directory '$tags[dir]' ($repo)\n"
 
             git checkout -q "$tags[at]" &>/dev/null
             if (( $status != 0 )); then
-                __zplug::io::print::die \
-                    "[zplug] $fg[red]ERROR$reset_color: pathspec '$tags[at]' (at tag) did not match ($repo)\n"
+                __zplug::io::print::f \
+                    --die \
+                    --zplug \
+                    --error \
+                    "pathspec '$tags[at]' (at tag) did not match ($repo)\n"
             fi
         )
     fi

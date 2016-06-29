@@ -17,19 +17,25 @@ __zplug::core::v1::tags()
             ;;
     esac
 
-    __zplug::io::print::die \
-        "[zplug] $fg[red]${(%):-"%U"}WARNING${(%):-"%u"}$reset_color: '$fg[blue]$key$reset_color' tag is deprecated. "
-    __zplug::io::print::die \
-        "Please use '$fg[blue]$new_key$reset_color' tag instead ($fg[green]${name:gs:@::}$reset_color).\n"
+    __zplug::io::print::f \
+        --die \
+        --zplug \
+        --warn \
+        "'%s' tag is deprecated. Please use '%s' tag instead (%s).\n" \
+        "$fg[blue]$key$reset_color" \
+        "$fg[blue]$new_key$reset_color" \
+        "$fg[green]${name:gs:@::}$reset_color"
 
     return 1
 }
 
 __zplug::core::v1::pipe()
 {
-    __zplug::io::print::die \
-        "[zplug] $fg[red]${(%):-"%U"}WARNING${(%):-"%u"}$reset_color: pipe syntax is deprecated!\n"
-    __zplug::io::print::die \
-        "[zplug] Please use '$fg[blue]on$reset_color' tag instead.\n"
+    __zplug::io::print::f \
+        --die \
+        --zplug \
+        --warn \
+        "pipe syntax is deprecated! Please use '%s' tag instead.\n" \
+        "$fg[blue]on$reset_color"
     return 1
 }

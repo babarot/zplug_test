@@ -58,8 +58,10 @@ __zplug::core::options::parse()
 
 __zplug::core::options::short()
 {
-    __zplug::io::print::die \
-        "[zplug] $arg: not yet available\n"
+    __zplug::io::print::f \
+        --die \
+        --zplug \
+        "$arg: not yet available\n"
     return 1
 }
 
@@ -72,8 +74,10 @@ __zplug::core::options::long()
         eval '__${opt}__ "$argv[@]"'
         return $status
     else
-        __zplug::io::print::die \
-            "[zplug] $arg: no such option\n"
+        __zplug::io::print::f \
+            --die \
+            --zplug \
+            "$arg: no such option\n"
         return 1
     fi
 }

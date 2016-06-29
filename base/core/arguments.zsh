@@ -38,27 +38,37 @@ __zplug::core::arguments::auto_correct()
 
     case $#cmds in
         0)
-            __zplug::io::print::die \
-                "[zplug] $arg: no such command\n"
+            __zplug::io::print::f \
+                --die \
+                --zplug \
+                "$arg: no such command\n"
             ret=1
             ;;
         1)
-            __zplug::io::print::die \
-                "[zplug] $fg[red]${(%):-"%U"}WARNING${(%):-"%u"}$reset_color: "
-            __zplug::io::print::die \
+            __zplug::io::print::f \
+                --die \
+                --zplug \
+                --warn \
                 "You called a zplug command named '%s', which does not exist.\n" \
                 "$arg"
-            __zplug::io::print::die \
-                "        Continuing under the assumption that you meant '$fg[green]%s$reset_color'.\n" \
+            __zplug::io::print::f \
+                --die \
+                --zplug \
+                --warn \
+                "Continuing under the assumption that you meant '$fg[green]%s$reset_color'.\n" \
                 "$cmds[1]"
 
             __zplug::io::print::put "$cmds[1]\n"
             ;;
         *)
+            __zplug::io::print::f \
+                --die \
+                --zplug \
+                --warn \
+                "'%s' is not a zplug command. see 'zplug --help'.\n" \
+                "$arg"
             __zplug::io::print::die \
-                "[zplug] '%s' is not a zplug command. See 'zplug help'.\n" "$arg"
-            __zplug::io::print::die \
-                "        Did you mean one of these?\n"
+                "               Did you mean one of these?\n"
             __zplug::io::print::die \
                 "               %s\n" "${cmds[@]}"
             ret=1

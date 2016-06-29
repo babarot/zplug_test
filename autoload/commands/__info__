@@ -39,8 +39,10 @@ fi
 for repo in "${repos[@]}"
 do
     if ! __zplug::base::base::zpluged "$repo"; then
-        __zplug::io::print::die \
-            "[zplug] info: $repo is not a managed package\n"
+        __zplug::io::print:f \
+            --die \
+            --zplug \
+            "'$repo' is not a managed package\n"
         return 1
     fi
 

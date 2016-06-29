@@ -40,8 +40,11 @@ if $is_select; then
         "$ZPLUG_FILTER" \
         | read filter
     if [[ -z $filter ]]; then
-        __zplug::io::die \
-            "[zplug] ERROR: There is no available filter in ZPLUG_FILTER\n"
+        __zplug::io::print::f \
+            --die \
+            --zplug \
+            --error \
+            "There is no available filter in ZPLUG_FILTER\n"
         return 1
     fi
     repos=( ${(@f)"$(echo "${(Fk)zplugs[@]}" | eval "$filter")"} )
@@ -77,8 +80,10 @@ else
                     ;;
             esac
         else
-            __zplug::io::print::die \
-                "[zplug] $repo: no such package\n"
+            __zplug::io::print::f \
+                --die \
+                --zplug \
+                "$repo: no such package\n"
             ret=1
         fi
     done

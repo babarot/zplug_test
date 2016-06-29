@@ -6,8 +6,10 @@ local    depth
 local -i default=0
 
 if [[ -n $arg ]] && ! __zplug::base::base::zpluged "$arg"; then
-    __zplug::io::print::die \
-        "[zplug] $arg: no package managed by zplug\n"
+    __zplug::io::print::f \
+        --die \
+        --zplug \
+        "$arg: no package managed by zplug\n"
     return 1
 fi
 
@@ -33,8 +35,11 @@ case $depth in
                 depth="$ZPLUG_CLONE_DEPTH"
                 ;;
             *)
-                __zplug::io::print::die \
-                    "[zplug] $fg[red]ERROR$reset_color: ZPLUG_CLONE_DEPTH must be a positive number.\n"
+                __zplug::io::print::f \
+                    --die \
+                    --zplug \
+                    --error \
+                    "ZPLUG_CLONE_DEPTH must be a positive number.\n"
                 return 1
                 ;;
         esac
@@ -45,10 +50,13 @@ case $depth in
         ;;
     *)
         # not integer
-        __zplug::io::print::die \
-            "[zplug] $fg[red]ERROR$reset_color: depth tag must be a positive number\n"
-        __zplug::io::print::die \
-            "        but, if zero, no shallow clone.\n"
+        __zplug::io::print::f \
+            --raw \
+            --die \
+            --zplug \
+            --error \
+            "depth tag must be a positive number\n" \
+            "but, if zero, no shallow clone.\n"
         return 1
         ;;
 esac

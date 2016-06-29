@@ -122,6 +122,7 @@ do
                     $SECONDS
                 ;;
             2)
+                # TODO: __zplug::io::print::f
                 __zplug::job::spinner::echo \
                     "[zplug] ERROR: sources/$tags[from] is not defined\n"
                 ;;
@@ -148,7 +149,10 @@ done
 
     # Skip footer prints
     if (( $#checked_packages == 0 )); then
-        __zplug::io::print::die "[zplug] No package to install\n"
+        __zplug::io::print::f \
+            --die \
+            --zplug \
+            "No package to install\n"
         return 1
     else
         if (( $#failed_packages == 0 )); then
