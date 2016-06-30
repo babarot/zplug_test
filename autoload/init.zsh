@@ -2,9 +2,11 @@
 # Also, load the body of zplug
 
 autoload -Uz add-zsh-hook
-autoload -Uz colors; colors
+autoload -Uz colors
 autoload -Uz compinit
 autoload -Uz zplug
+
+colors
 
 ()
 {
