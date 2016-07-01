@@ -30,7 +30,7 @@ __zplug::sources::local::load_plugin()
 {
     local    repo="${1:?}"
     local -A tags
-    local -a load_patterns
+    local -a load_plugins
     local -a load_fpaths
     local    expanded_path
     local -a expanded_paths
@@ -43,10 +43,10 @@ __zplug::sources::local::load_plugin()
     for expanded_path in "${expanded_paths[@]}"
     do
         if [[ -f $expanded_path ]]; then
-            load_patterns+=( "$expanded_path" )
+            load_plugins+=( "$expanded_path" )
         elif [[ -d $expanded_path ]]; then
             if [[ -n $tags[use] ]]; then
-                load_patterns+=( $(zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo $expanded_path/$tags[use]" 2>/dev/null) )
+                load_plugins+=( $(zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo $expanded_path/$tags[use]" 2>/dev/null) )
             else
                 load_fpaths+=(
                     "$expanded_path"/{_*,**/_*}(N-.:h)
@@ -55,7 +55,7 @@ __zplug::sources::local::load_plugin()
         fi
     done
 
-    if (( $#load_patterns == 0 )); then
+    if (( $#load_plugins == 0 )); then
         __zplug::io::print::f \
             --die \
             --zplug \
@@ -65,7 +65,7 @@ __zplug::sources::local::load_plugin()
 
     reply=()
     [[ -n $load_fpaths ]] && reply+=( load_fpaths "${(F)load_fpaths}" )
-    [[ -n $load_patterns ]] && reply+=( load_patterns "${(F)load_patterns}" )
+    [[ -n $load_plugins ]] && reply+=( load_plugins "${(F)load_plugins}" )
 
     return 0
 }

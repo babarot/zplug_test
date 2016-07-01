@@ -68,6 +68,7 @@ __zplug::core::add::to_zplugs()
         fi
     done
 
+    # In case of that from tag is default
     __zplug::sources::call::default
 
     # Add to zplugs

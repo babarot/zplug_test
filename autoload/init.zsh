@@ -27,3 +27,5 @@ colors
         autoload -Uz "__${tag}__"
     done
 }
+
+__zplug::io::file::load

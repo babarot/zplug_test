@@ -12,6 +12,8 @@ __zplug::sources::call::this()
 __zplug::sources::call::default()
 {
     local val
+
+    # Get the default value
     val="$(__from__)"
     __zplug::sources::call::this "$val"
 }

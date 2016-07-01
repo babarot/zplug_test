@@ -1,4 +1,4 @@
-__zplug::io::cache::tags()
+__zplug::io::cache::create()
 {
     local name
 
@@ -6,7 +6,7 @@ __zplug::io::cache::tags()
     do
         # In order to sort $zplugs[$name],
         # do not quate this string
-        echo ${name}${zplugs[$name]:+, ${(o)zplugs[$name]}}
+        echo "${name}${zplugs[$name]:+, ${(os:, :)zplugs[$name]}}"
     done
 }
 
@@ -24,7 +24,7 @@ __zplug::io::cache::load()
             "$ZPLUG_CACHE_FILE" \
             ) \
             <( \
-            __zplug::io::cache::tags \
+            __zplug::io::cache::create \
             )
 
         case $status in
@@ -110,7 +110,7 @@ __zplug::io::cache::update()
             __zplug::io::print::put '\n'
         fi
         __zplug::io::print::put '\nreturn 0\n'
-        __zplug::io::print::put '%s\n' "$(__zplug::io::cache::tags)"
+        __zplug::io::print::put '%s\n' "$(__zplug::io::cache::create)"
     } >|"$ZPLUG_CACHE_FILE"
 
     if [[ -f $ZPLUG_CACHE_FILE ]]; then
