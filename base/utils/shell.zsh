@@ -111,3 +111,8 @@ __zplug::utils::shell::sudo()
     echo "$pw" \
         | sudo -S -p '' "$argv[@]"
 }
+
+__zplug::utils::shell::unansi()
+{
+    perl -pe 's/\e\[?.*?[\@-~]//g'
+}
