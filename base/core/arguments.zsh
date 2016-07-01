@@ -11,9 +11,12 @@ __zplug::core::arguments::exec()
         return $status
     fi
 
-    __zplug::core::arguments::auto_correct "$arg" \
-        | read cmd && \
-        zplug "$cmd" ${2:+"$argv[2,-1]"}
+    # Fuzzy match
+    if ! __zplug::core::arguments::auto_correct "$arg"; then
+        return $status
+    fi
+
+    zplug "$reply[1]" ${2:+"$argv[2,-1]"}
 }
 
 __zplug::core::arguments::auto_correct()
@@ -58,19 +61,18 @@ __zplug::core::arguments::auto_correct()
                 "Continuing under the assumption that you meant '$fg[green]%s$reset_color'.\n" \
                 "$cmds[1]"
 
-            __zplug::io::print::put "$cmds[1]\n"
+            reply=( "$cmds[1]" )
             ;;
         *)
             __zplug::io::print::f \
+                --raw \
                 --die \
                 --zplug \
                 --warn \
-                "'%s' is not a zplug command. see 'zplug --help'.\n" \
-                "$arg"
+                "'$arg' is not a zplug command. see 'zplug --help'.\n" \
+                "Did you mean one of these?\n"
             __zplug::io::print::die \
-                "               Did you mean one of these?\n"
-            __zplug::io::print::die \
-                "               %s\n" "${cmds[@]}"
+                "$fg[yellow] - $reset_color%s\n" "${cmds[@]}"
             ret=1
             ;;
     esac

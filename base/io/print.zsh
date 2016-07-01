@@ -10,11 +10,22 @@ __zplug::io::print::die()
 
 __zplug::io::print::f()
 {
+    local -a pre_formats post_formats
     local -a formats texts
     local    arg text
     local -i fd=1
     local \
-        is_raw=false
+        is_raw=false \
+        is_end=false \
+        is_end_specified=false \
+        is_per_specified=false
+
+    if (( $argv[(I)--] )); then
+        is_end_specified=true
+    fi
+    if (( $argv[(I)*%*] )); then
+        is_per_specified=true
+    fi
 
     while (( $# > 0 ))
     do
@@ -30,18 +41,16 @@ __zplug::io::print::f()
                 is_raw=true
                 ;;
             --zplug)
-                formats+=( "[zplug]" )
+                pre_formats+=( "[zplug]" )
                 ;;
             --warn)
-                formats+=( "$fg[red]${(%):-"%U"}WARNING${(%):-"%u"}$reset_color:" )
+                pre_formats+=( "$fg[red]${(%):-"%U"}WARNING${(%):-"%u"}$reset_color:" )
                 ;;
             --error)
-                formats+=( "$fg[red]ERROR$reset_color:" )
+                pre_formats+=( "$fg[red]ERROR$reset_color:" )
                 ;;
             --)
-                if $is_raw; then
-                    texts+=( "\n" )
-                fi
+                is_end=true
                 ;;
             --* | -*)
                 __zplug::io::print::die "$arg: no such option\n"
@@ -49,21 +58,51 @@ __zplug::io::print::f()
             "")
                 ;;
             *)
-                texts+=( "$arg" )
+                if $is_end_specified; then
+                    if $is_end; then
+                        texts+=( "$arg" )
+                    else
+                        post_formats+=( "$arg" )
+                    fi
+                else
+                    texts+=( "$arg" )
+                fi
                 ;;
         esac
         shift
     done
 
-    format="${formats[*]}"
-
-    if $is_raw; then
-        for text in "$texts[@]"
-        do
-            command printf -- "$format $text"
-        done >&$fd
-    else
-        command printf -- "${texts[@]}" \
-            | sed 's/^/'"$format "'/g'
-    fi
+    # Change the output destination by the value of $fd
+    {
+        if $is_end_specified; then
+            local -i lines=0
+            printf "${post_formats[*]}" | grep -c "" | read lines
+            if (( $lines > 1 )); then
+                perl -pe 's/\e\[?.*?[\@-~]//g' <<<"${pre_formats[*]}" | read pre_format
+                repeat $#pre_format; do w="$w "; done
+            fi
+            for ((i = 1; i <= $lines; i++))
+            do
+                if (( $i > 1 )); then
+                    pre_formats=( "$w" )
+                fi
+                formats[$i]="${pre_formats[*]} $post_formats[$i]"
+            done
+            command printf -- "${(j::)formats[@]}" "${texts[@]}"
+        else
+            if $is_per_specified; then
+                command printf -- "${pre_formats[*]} ${texts[@]}"
+            else
+                format="${pre_formats[*]}"
+                for text in "$texts[@]"
+                do
+                    command printf -- "$format $text"
+                done
+            fi
+        fi
+    } >&$fd
 }
+
+__zplug::io::print::f --zplug --warn "%s\n" "%s\n" -- abc abc
+#__zplug::io::print::f --zplug --warn "%s\n%s\n" abc abc
+#__zplug::io::print::f --zplug --warn "abc\n" "abc\n"

@@ -19,9 +19,10 @@ __zplug::core::commands::user_defined()
 
     reply=()
 
-    user_cmds=( ${(u)^path[@]}/zplug-*(N-.:t:gs:zplug-:) )
+    user_cmds=( ${^path[@]}/zplug-*(N-.:t:gs:zplug-:) )
     if (( $#user_cmds > 0 )); then
-        reply+=( "${user_cmds[@]}" )
+        # Unique
+        reply+=( "${(u)user_cmds[@]}" )
         return 0
     fi
 
