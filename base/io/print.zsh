@@ -10,6 +10,7 @@ __zplug::io::print::die()
 
 __zplug::io::print::f()
 {
+    local -i lines=0
     local    w pre_format post_format format
     local -a pre_formats post_formats
     local -a formats texts
@@ -81,52 +82,35 @@ __zplug::io::print::f()
 
     # Change the output destination by the value of $fd
     {
+        echo "${pre_formats[*]}" \
+            | __zplug::utils::shell::unansi \
+            | read pre_format
+        repeat $#pre_format; do w="$w "; done
+
         if $is_end_specified; then
-            local -i lines=0
             printf "${post_formats[*]}" \
                 | grep -c "" \
                 | read lines
-            if (( $lines > 1 )); then
-                echo "${pre_formats[*]}" \
-                    | __zplug::utils::shell::unansi \
-                    | read pre_format
-                repeat $#pre_format; do w="$w "; done
-            fi
             for (( i = 1; i <= $lines; i++ ))
             do
-                if ! $is_multi; then
-                    if (( $i > 1 )); then
-                        pre_formats=( "$w" )
-                    fi
+                if ! $is_multi && (( $i > 1 )); then
+                    pre_formats=( "$w" )
                 fi
                 formats[$i]="${pre_formats[*]} $post_formats[$i]"
             done
             command printf -- "${(j::)formats[@]}" "${texts[@]}"
+        elif $is_per_specified; then
+            command printf -- "${pre_formats[*]} ${texts[@]}"
         else
-            if $is_per_specified; then
-                command printf -- "${pre_formats[*]} ${texts[@]}"
-            else
-                format="${pre_formats[*]}"
-                if $is_multi; then
-                    for text in "$texts[@]"
-                    do
-                        command printf -- "$format $text"
-                    done
-                else
-                    for (( i = 1; i <= $#texts; i++ ))
-                    do
-                        if (( $i > 1 )); then
-                            echo "${pre_formats[*]}" \
-                                | __zplug::utils::shell::unansi \
-                                | read pre_format
-                            repeat $#pre_format; do w="$w "; done
-                            format="$w"
-                        fi
-                        formats[$i]="${format:+$format }$post_formats[$i]"
-                        command printf -- "$formats[$i]$texts[$i]"
-                    done
+            format="${pre_formats[*]}"
+            for (( i = 1; i <= $#texts; i++ ))
+            do
+                if ! $is_multi && (( $i > 1 )); then
+                    format="$w"
                 fi
-            fi
+                formats[$i]="${format:+$format }$post_formats[$i]"
+                command printf -- "$formats[$i]$texts[$i]"
+            done
         fi
     } >&$fd
 }
