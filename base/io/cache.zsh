@@ -51,6 +51,8 @@ __zplug::io::cache::update()
 {
     $ZPLUG_USE_CACHE || return 2
 
+    local load_command
+
     if [[ ! -d ${ZPLUG_CACHE_FILE:h} ]]; then
         mkdir -p "${ZPLUG_CACHE_FILE:h}"
     fi
@@ -73,16 +75,21 @@ __zplug::io::cache::update()
         __zplug::io::print::put '  echo "Static loading..." >&2\n'
         __zplug::io::print::put 'fi\n'
         if [[ -o prompt_subst ]]; then
-            __zplug::io::print::put 'setopt prompt_subst\n'
+            __zplug::io::print::put '\nsetopt prompt_subst\n'
         fi
-        #if (( $#load_commands > 0 )); then
-        #    __zplug::io::print::put '# Commands\n'
-        #    __zplug::io::print::put 'chmod a=rx "%s"\n' \
-        #        "${(uk)load_commands[@]}"
-        #    __zplug::io::print::put 'ln -snf "%s" "$ZPLUG_HOME/bin"\n' \
-        #        "${(uk)load_commands[@]}"
-        #    __zplug::io::print::put '\n'
-        #fi
+        __zplug::io::print::put '\n'
+        if (( $#load_commands > 0 )); then
+            __zplug::io::print::put '# Commands\n'
+            __zplug::io::print::put 'chmod a=rx "%s"\n' \
+                "${(uk)load_commands[@]}"
+            for load_command in "${(uk)load_commands[@]}"
+            do
+                __zplug::io::print::put 'ln -snf "%s" "%s"\n' \
+                    "$load_command" \
+                    "$load_commands[$load_command]"
+            done
+            __zplug::io::print::put '\n'
+        fi
         if (( $#load_plugins > 0 )); then
             __zplug::io::print::put '# Plugins\n'
             __zplug::io::print::put 'source %s\n' "${(uqqq)load_plugins[@]}"

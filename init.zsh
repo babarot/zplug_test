@@ -12,6 +12,7 @@ typeset -gx -U fpath
 # Add to the PATH
 path=(
 "$ZPLUG_ROOT"/bin
+"$ZPLUG_HOME"/bin
 "$path[@]"
 )
 
