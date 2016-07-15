@@ -53,4 +53,11 @@ __zplug::utils::awk::available()
 {
     __zplug::utils::awk::path \
         | read awk_path
+
+    # AWK is available
+    if [[ -n $awk_path ]]; then
+        return 0
+    else
+        return 1
+    fi
 }

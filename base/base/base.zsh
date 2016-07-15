@@ -57,6 +57,11 @@ __zplug::base::base::version_requirement()
 
 __zplug::base::base::git_version()
 {
+    # Return false if git command doesn't exist
+    if (( ! $+commands[git] )); then
+        return 1
+    fi
+
     __zplug::base::base::version_requirement \
         ${(M)${(z)"$(git --version)"}:#[0-9]*[0-9]} \
         "${@:?}"
