@@ -9,7 +9,7 @@ local    default="github"
 local -a candidates
 
 if [[ -n $arg ]] && ! __zplug::base::base::zpluged "$arg"; then
-    __zplug::io::print:f \
+    __zplug::io::print::f \
         --die \
         --zplug \
         --func \

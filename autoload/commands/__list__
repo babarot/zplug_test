@@ -57,7 +57,7 @@ done
         __zplug::utils::shell::search_commands "$ZPLUG_FILTER" \
             | read filter
         if [[ -z $filter ]]; then
-            __zplug::io:print:::die \
+            __zplug::io::print::die \
                 --die \
                 --zplug \
                 --error \
