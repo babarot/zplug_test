@@ -73,16 +73,6 @@ __zplug::core::core::run_interfaces()
         autoload -Uz "$interface"
     fi
 
-    # $interface does not exist in fpath
-    # even if do run autoload -Uz command
-    #if ! __zplug::base::base::is_autoload "$interface"; then
-    #    __zplug::io::print::f \
-    #        --die \
-    #        --zplug \
-    #        "$interface: is not autoload file\n"
-    #    return 1
-    #fi
-
     # Execute
     ${=interface} "$argv[@]"
     ret=$status
@@ -105,6 +95,73 @@ __zplug::core::core::reload()
     autoload -Uz "$reply[@]"
 }
 
+__zplug::core::core::prepare()
+{
+    # Unique array
+    typeset -gx -U path
+    typeset -gx -U fpath
+
+    # Add to the PATH
+    path=(
+    "$ZPLUG_ROOT"/bin
+    "$ZPLUG_HOME"/bin
+    "$path[@]"
+    )
+
+    # Add to the FPATH
+    fpath=(
+    "$ZPLUG_ROOT"/misc/completions(N-/)
+    "$ZPLUG_ROOT/base/sources"
+    "$fpath[@]"
+    )
+
+    # Check whether you meet the requirements for using zplug
+    # 1. zsh 4.3.9 or more
+    # 2. git
+    # 3. nawk or gawk
+    {
+        if ! __zplug::base::base::zsh_version 4.3.9; then
+            __zplug::io::print::f \
+                --die \
+                --zplug \
+                --error \
+                "zplug does not work this version of zsh $ZSH_VERSION.\n" \
+                "You must use zsh 4.3.9 or later.\n"
+            return 1
+        fi
+
+        if ! __zplug::base::base::git_version 1.7; then
+            __zplug::io::print::f \
+                --die \
+                --zplug \
+                --error \
+                "git command not found in \$PATH\n" \
+                "zplug depends on git 1.7 or later.\n"
+            return 1
+        fi
+
+        if ! __zplug::utils::awk::available; then
+            __zplug::io::print::f \
+                --die \
+                --zplug \
+                --error \
+                'No available AWK variant in your $PATH\n'
+            return 1
+        fi
+    }
+
+    # Release zplug variables and export
+    __zplug::core::core::variable || return 1
+
+    mkdir -p "$ZPLUG_REPOS"
+    mkdir -p "$ZPLUG_HOME/bin"
+
+    # Run compinit if zplug comp file hasn't load
+    if (( ! $+functions[_zplug] )); then
+        compinit
+    fi
+}
+
 __zplug::core::core::variable()
 {
     # for 'autoload -Uz zplug' in another subshell
@@ -125,10 +182,6 @@ __zplug::core::core::variable()
     typeset -gx    _ZPLUG_AWKPATH="$ZPLUG_ROOT/misc/contrib"
     typeset -gx    ZPLUG_SUDO_PASSWORD
 
-    #__zplug::base::base::get_tags
-    #typeset -ga _zplug_tag_pattern
-    #_zplug_tag_pattern=( "${reply[@]}" )
-
     if (( $+ZPLUG_SHALLOW )); then
         __zplug::io::print::f \
             --die \
@@ -148,13 +201,6 @@ __zplug::core::core::variable()
         __zplug::core::options::get; _zplug_options=( "${reply[@]}" )
         __zplug::core::commands::get; _zplug_commands=( "${reply[@]}" )
         __zplug::core::tags::get; _zplug_tags=( "${reply[@]}" )
-
-        #typeset -gx -a -U _zplug_interfaces
-        #_zplug_interfaces=(
-        #__${^${(k)_zplug_options[@]}}__
-        #__${^${(k)_zplug_commands[@]}}__
-        #__${^${(k)_zplug_tags[@]}}__
-        #)
     }
 
     # boolean
