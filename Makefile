@@ -21,7 +21,7 @@ shove: # Grab shove from GitHub and grant execution
 		fi
 
 test: shove ## Unit test for zplug
-	$(SHOVE_DIR)/bin/shove -r test
+	$(SHOVE_DIR)/bin/shove -r test -s zsh
 
 license: ## Generate License
 	@curl -fsSL -o $(LICENSE_TXT) $(LICENSE_URL)
