@@ -2,8 +2,13 @@ __zplug::core::self::check()
 {
     local repo="${1:?}"
 
-    (( $+zplugs[$repo] ))
+    [[ -d $ZPLUG_REPOS/$repo ]]
     return $status
+}
+
+__zplug::core::self::install()
+{
+    __zplug::core::self::clone "$argv[@]"
 }
 
 __zplug::core::self::clone()

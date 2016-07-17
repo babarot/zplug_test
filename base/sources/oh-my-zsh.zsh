@@ -119,14 +119,14 @@ __zplug::sources::oh-my-zsh::load_plugin()
     local    repo="${1:?}"
     local -A tags
     local -a load_fpaths
-    local -a load_patterns
+    local -a load_plugins
     local -a themes_ext
 
     __zplug::core::tags::parse "$repo"
     tags=( "${reply[@]}" )
 
     load_fpaths=()
-    load_patterns=()
+    load_plugins=()
     # Themes' extensions for Oh-My-Zsh
     themes_ext=("zsh-theme" "theme-zsh")
 
@@ -147,20 +147,20 @@ __zplug::sources::oh-my-zsh::load_plugin()
     case $tags[name] in
         plugins/*)
             # TODO: use tag
-            load_patterns=(
+            load_plugins=(
                 ${(@f)"$(__zplug::utils::omz::depends "$tags[name]")"}
                 "$tags[dir]"/*.plugin.zsh(N-.)
             )
             ;;
         themes/*)
             # TODO: use tag
-            load_patterns=(
+            load_plugins=(
                 ${(@f)"$(__zplug::utils::omz::depends "$tags[name]")"}
                 "$tags[dir]".${^themes_ext}(N-.)
             )
             ;;
         lib/*)
-            load_patterns=(
+            load_plugins=(
                 "$tags[dir]"${~tags[use]}
             )
             ;;
@@ -171,7 +171,7 @@ __zplug::sources::oh-my-zsh::load_plugin()
 
     reply=()
     [[ -n $load_fpaths ]] && reply+=( load_fpaths "${(F)load_fpaths}" )
-    [[ -n $load_patterns ]] && reply+=( load_patterns "${(F)load_patterns}" )
+    [[ -n $load_plugins ]] && reply+=( load_plugins "${(F)load_plugins}" )
 
     return 0
 }
