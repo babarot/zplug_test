@@ -127,8 +127,8 @@ do
 
             # Adjust space sizes
             dif=$(( $max - $#repo ))
-            __zplug::job::spinner::echo "${(%):-"%U"}%-${#repo}s${(%):-"%u"}%${dif}s %s\n" \
-                "$repo" \
+            __zplug::job::spinner::echo "%-${#repo}s %${dif}s %s\n" \
+                "$em[under]$repo$reset_color" \
                 "" \
                 "$state"
         fi

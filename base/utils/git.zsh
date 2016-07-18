@@ -84,6 +84,34 @@ __zplug::utils::git::checkout()
     )
 }
 
+__zplug::utils::git::status()
+{
+    local    repo="${1:?}"
+    local    key val line
+    local -A revisions
+
+    git ls-remote --heads --tags https://github.com/"$repo".git \
+        | awk '{print $2,$1}' \
+        | sed -E 's@^refs/(heads|tags)/@@g' \
+        | while read line; do
+            key=${${(s: :)line}[1]}
+            val=${${(s: :)line}[2]}
+            revisions[$key]="$val"
+        done
+
+    git \
+        --git-dir="$ZPLUG_REPOS/$repo/.git" \
+        --work-tree="$ZPLUG_REPOS/$repo" \
+        log \
+        --oneline \
+        --pretty="format:%H" \
+        --max-count=1 \
+        | read val
+    revisions[local]="$val"
+
+    reply=( "${(kv)revisions[@]}" )
+}
+
 __zplug::utils::git::get_head_branch_name()
 {
     local head_branch
@@ -103,16 +131,7 @@ __zplug::utils::git::get_head_branch_name()
 
 __zplug::utils::git::get_remote_name()
 {
-    local branch remote_name
-    branch="$1"
-
-    if [[ -z $branch ]]; then
-        __zplug::io::print::f \
-            --die \
-            --zplug \
-            "too few arguments\n"
-        return 1
-    fi
+    local branch="${1:?}" remote_name
 
     remote_name="$(git config branch.${branch}.remote)"
     if [[ -z $remote_name ]]; then
@@ -123,7 +142,7 @@ __zplug::utils::git::get_remote_name()
         return 1
     fi
 
-    __zplug::io::print::put "$remote_name\n"
+    echo "$remote_name"
 }
 
 __zplug::utils::git::get_remote_state()
@@ -206,9 +225,10 @@ __zplug::utils::git::get_state()
 
 __zplug::utils::git::remote_url()
 {
-    if [[ ! -e .git ]]; then
-        return 1
-    fi
+    # Check if it has git directory
+    [[ -e .git ]] || return 1
 
-    git remote -v | sed -n '1p' | awk '{print $2}'
+    git remote -v \
+        | sed -n '1p' \
+        | awk '{print $2}'
 }

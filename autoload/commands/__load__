@@ -195,7 +195,7 @@ done
             if (( $status == 0 )); then
                 $is_verbose && \
                     __zplug::io::print::put \
-                    "$fg[green]  Linked$reset_color %s to ${(%):-"%B"}%s${(%):-"%b"}\n" \
+                    "$fg[green]  Linked$reset_color %s to $em[bold]%s$reset_color\n" \
                     "${pkg#$ZPLUG_REPOS/}" \
                     "$load_commands[$pkg]"
             else

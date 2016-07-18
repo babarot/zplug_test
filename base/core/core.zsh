@@ -235,4 +235,8 @@ __zplug::core::core::variable()
             _ZPLUG_CONFIG_SUBSHELL="setopt ${(u)only_subshell[@]}"
         fi
     }
+
+    typeset -gx -A em
+    em[under]="${(%):-"%U"}"
+    em[bold]="${(%):-"%B"}"
 }

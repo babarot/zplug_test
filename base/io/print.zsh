@@ -48,7 +48,7 @@ __zplug::io::print::f()
                     if [[ $func =~ __$ ]]; then
                         func="${func:gs:_:}"
                     fi
-                    pre_formats+=( "|${(%):-"%B"}$func${(%):-"%b"}|" )
+                    pre_formats+=( "|$em[bold]$func$reset_color|" )
                 fi
                 ;;
             --multi)
@@ -58,7 +58,7 @@ __zplug::io::print::f()
                 pre_formats+=( "[zplug]" )
                 ;;
             --warn)
-                pre_formats+=( "$fg[red]${(%):-"%U"}WARNING${(%):-"%u"}$reset_color:" )
+                pre_formats+=( "$fg[red]$em[under]WARNING$reset_color:" )
                 ;;
             --error)
                 pre_formats+=( "$fg[red]ERROR$reset_color:" )
@@ -66,9 +66,6 @@ __zplug::io::print::f()
             --)
                 is_end=true
                 ;;
-            #--* | -*)
-            #    __zplug::io::print::die "$arg: no such option\n"
-            #    ;;
             "")
                 ;;
             *)
@@ -137,27 +134,3 @@ __zplug::io::print::f()
         fi
     } >&$fd
 }
-
-#source base/utils/shell.zsh
-# __zplug::io::print::f \
-#     --zplug \
-#     --multi \
-#     "%s\n" "%s\n" \
-#     -- \
-#     abc abc
-# __zplug::io::print::f \
-#     --zplug \
-#     "%s\n" "%s\n" \
-#     -- \
-#     abc abc
-# __zplug::io::print::f \
-#     --zplug \
-#     "%s\n%s\n" \
-#     abc abc
-# __zplug::io::print::f \
-#     --zplug \
-#     --multi \
-#     "abc\n" "abc\n"
-# __zplug::io::print::f \
-#     --zplug \
-#     "abc\n" "abc\n"
