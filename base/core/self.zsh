@@ -32,11 +32,6 @@ __zplug::core::self::install()
     __zplug::sources::github::install "zplug/zplug"
 }
 
-__zplug::core::self::uninstall()
-{
-    rm -rf "$ZPLUG_REPOS/zplug/zplug"
-}
-
 __zplug::core::self::update()
 {
     local head
@@ -44,9 +39,9 @@ __zplug::core::self::update()
     # If there is a difference in the remote and local
     # re-install zplug by itself and initialize
     if ! __zplug::core::self::status --up-to-date; then
-        __zplug::core::self::uninstall
-        __zplug::core::self::install
-        __zplug::core::self::init
+        __zplug::core::core::run_interfaces \
+            "update" \
+            "zplug/zplug"
         return $status
     fi
 
