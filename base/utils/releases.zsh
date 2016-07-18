@@ -154,8 +154,9 @@ __zplug::utils::releases::get()
     fi
 
     (
-    mkdir -p "$dir"
-    builtin cd -q "$dir"
+    __zplug::utils::shell::cd \
+        --force \
+        "$dir"
 
     # Grab artifact from G-R
     eval "$cmd $url" &>/dev/null

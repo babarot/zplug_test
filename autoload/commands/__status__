@@ -112,9 +112,8 @@ do
         trap '__zplug::job::spinner::unlock; trap - SIGINT' SIGINT
 
         # Change directory to get the remote status
-        builtin cd -q \
-            "$tags[dir]" \
-            &>/dev/null
+        __zplug::utils::shell::cd \
+            "$tags[dir]"
 
         if (( $status == 0 )); then
             # Get the status of the repository (whether it is a latest)

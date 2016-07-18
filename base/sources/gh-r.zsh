@@ -30,9 +30,7 @@ __zplug::sources::gh-r::update()
     tags[use]="$(__zplug::core::core::run_interfaces 'use' "$repo")"
     tags[at]="$(__zplug::core::core::run_interfaces 'at' "$repo")"
 
-    builtin cd -q $tags[dir] \
-        &>/dev/null \
-        || return 1
+    __zplug::utils::shell::cd "$tags[dir]" || return 1
 
     url="$(
     __zplug::utils::releases::get_url \

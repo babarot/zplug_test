@@ -19,7 +19,7 @@ __zplug::job::hook::service()
 
     if [[ -n $tags[$hook] ]]; then
         (
-        builtin cd -q "$tags[dir]"
+        __zplug::utils::shell::cd "$tags[dir]"
         alias sudo=__zplug::utils::shell::sudo
 
         eval "$tags[$hook]" 2>/dev/null

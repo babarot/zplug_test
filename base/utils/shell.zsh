@@ -119,14 +119,37 @@ __zplug::utils::shell::unansi()
 
 __zplug::utils::shell::cd()
 {
-    local dir
+    local    dir arg
+    local -a dirs
+    local    is_force=false
 
-    for dir in "$argv[@]"
+    while (( $# > 0 ))
     do
-        if [[ -d $dir ]]; then
-            builtin cd "$dir" &>/dev/null
-            return $status
+        arg="$1"
+        case "$arg" in
+            --force)
+                is_force=true
+                ;;
+            -*|--*)
+                return 1
+                ;;
+            "")
+                ;;
+            *)
+                dirs+=( "$arg" )
+                ;;
+        esac
+        shift
+    done
+
+    for dir in "$dirs[@]"
+    do
+        if $is_force; then
+            [[ -d $dir ]] || mkdir -p "$dir"
         fi
+
+        builtin cd "$dir" &>/dev/null
+        return $status
     done
 
     return 1

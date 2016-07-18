@@ -34,7 +34,7 @@ __zplug::sources::github::update()
         # 3: Repo has frozen tag
         # 4: Up-to-date
 
-        builtin cd -q $tags[dir] || return 2
+        __zplug::utils::shell::cd "$tags[dir]" || return 2
 
         if [[ -e $tags[dir]/.git/shallow ]]; then
             git fetch --unshallow
