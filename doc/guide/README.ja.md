@@ -40,7 +40,7 @@
 ### 推奨方法
 
 ```console
-$ curl -sL get.zplug.sh | zsh
+$ curl -sL zplug.sh/installer | zsh
 ```
 
 インストーラの実態:
