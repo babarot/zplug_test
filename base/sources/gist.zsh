@@ -13,11 +13,11 @@ __zplug::sources::gist::update()
     __zplug::sources::github::update "$argv[@]"
 }
 
-__zplug::sources::gist::clone()
+__zplug::sources::gist::get_url()
 {
-    local repo="${1:?}"
+    local repo="${1:?}" url_format
 
-    case $ZPLUG_PROTOCOL in
+    case "$ZPLUG_PROTOCOL" in
         HTTPS | https)
             # https://git::@github.com/%s.git
             url_format="https://git::@gist.github.com/${repo}.git"
@@ -34,31 +34,7 @@ __zplug::sources::gist::clone()
             ;;
     esac
 
-    if [[ -z $url_format ]]; then
-        __zplug::io::print::f \
-            --die \
-            --zplug \
-            --error \
-            "$repo is an invalid 'user/repo' format.\n"
-        return 1
-    fi
-
-    tag_depth="$(
-    __zplug::core::core::run_interfaces \
-        'depth' \
-        "$repo"
-    )"
-    if (( $tag_depth == 0 )); then
-        tag_depth=""
-    else
-        tag_depth="--depth=$tag_depth"
-    fi
-
-    git clone \
-        ${=tag_depth} \
-        --recursive \
-        --quiet \
-        "$url_format" "$ZPLUG_REPOS/$repo" &>/dev/null
+    echo "$url_format"
 }
 
 __zplug::sources::gist::load_plugin()

@@ -38,44 +38,9 @@ __zplug::sources::oh-my-zsh::update()
     return $status
 }
 
-__zplug::sources::oh-my-zsh::clone()
+__zplug::sources::oh-my-zsh::get_url()
 {
-    local repo="$_ZPLUG_OHMYZSH"
-    local target="${1:?}"
-
-    case $ZPLUG_PROTOCOL in
-        HTTPS | https)
-            # https://git::@github.com/%s.git
-            url_format="https://git::@gist.github.com/${repo}.git"
-
-            if __zplug::base::base::git_version 2.3; then
-                # (git 2.3+) https://gist.github.com/%s.git
-                export GIT_TERMINAL_PROMPT=0
-                url_format="https://gist.github.com/${repo}.git"
-            fi
-            ;;
-        SSH | ssh)
-            # git@github.com:%s.git
-            url_format="git@gist.github.com:${repo}.git"
-            ;;
-    esac
-
-    tag_depth="$(
-    __zplug::core::core::run_interfaces \
-        'depth' \
-        "$repo"
-    )"
-    if (( $tag_depth == 0 )); then
-        tag_depth=""
-    else
-        tag_depth="--depth=$tag_depth"
-    fi
-
-    git clone \
-        ${=tag_depth} \
-        --recursive \
-        --quiet \
-        "$url_format" "$ZPLUG_REPOS/$repo" &>/dev/null
+    __zplug::sources::github::get_url "$_ZPLUG_OHMYZSH"
 }
 
 __zplug::sources::oh-my-zsh::load_plugin()

@@ -22,14 +22,14 @@ __zplug::core::self::check()
     __zplug::sources::github::check "zplug/zplug"
 }
 
-__zplug::core::self::clone()
-{
-    __zplug::sources::github::clone "zplug/zplug"
-}
-
 __zplug::core::self::install()
 {
     __zplug::sources::github::install "zplug/zplug"
+}
+
+__zplug::core::self::get_url()
+{
+    __zplug::sources::github::get_url "zplug/zplug"
 }
 
 __zplug::core::self::update()

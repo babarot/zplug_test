@@ -16,7 +16,17 @@ __zplug::sources::gh-r::check()
 
 __zplug::sources::gh-r::install()
 {
-    __zplug::sources::github::install "$argv[@]"
+    local repo="${1:?}"
+    local url
+
+    url="$(
+    __zplug::utils::releases::get_url \
+        "$repo"
+    )"
+
+    __zplug::utils::releases::get "$url"
+
+    return $status
 }
 
 __zplug::sources::gh-r::update()
@@ -64,21 +74,6 @@ __zplug::sources::gh-r::update()
         # Not found
         return 2
     fi
-}
-
-__zplug::sources::gh-r::clone()
-{
-    local repo="${1:?}"
-    local url
-
-    url="$(
-    __zplug::utils::releases::get_url \
-        "$repo"
-    )"
-
-    __zplug::utils::releases::get "$url"
-
-    return $status
 }
 
 __zplug::sources::gh-r::load_command()

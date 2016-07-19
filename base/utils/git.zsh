@@ -1,12 +1,13 @@
 __zplug::utils::git::clone()
 {
-    local    repo="$1"
+    local    repo="${1:?}"
+    local    depth_option url_format
     local -i ret=1
     local -A tags
 
-    tags[from]="$(__zplug::core::core::run_interfaces 'from' "$repo")"
-    tags[at]="$(__zplug::core::core::run_interfaces 'at' "$repo")"
-
+    # A validation of ZPLUG_PROTOCOL
+    # - HTTPS (recommended)
+    # - SSH
     if [[ ! $ZPLUG_PROTOCOL =~ ^(HTTPS|https|SSH|ssh)$ ]]; then
         __zplug::io::print::f \
             --die \
@@ -16,32 +17,43 @@ __zplug::utils::git::clone()
         return 1
     fi
 
-    if __zplug::core::sources::is_handler_defined "clone" "$tags[from]"; then
-        __zplug::core::sources::use_handler \
-            "clone" \
-            "$tags[from]" \
-            "$repo"
-        ret=$status
+    __zplug::core::tags::parse "$repo" || return 1
+    tags=( "${reply[@]}" )
+
+    if [[ $tags[depth] == 0 ]]; then
+        depth_option=""
+    else
+        depth_option="--depth=$tags[depth]"
     fi
 
-    if (( $ret == 0 )) && [[ $tags[from] != "gh-r" ]]; then
-        (
-        {
-            # revision/branch/tag lock
-            builtin cd -q "$ZPLUG_REPOS/$repo"
-            git checkout -q "$tags[at]"
-        } &>/dev/null
+    # Assemble a URL for cloning from its handler
+    if __zplug::core::sources::is_handler_defined "get_url" "$tags[from]"; then
+        __zplug::core::sources::use_handler \
+            "get_url" \
+            "$tags[from]" \
+            "$repo" \
+            | read url_format
 
-        if (( $status != 0 )); then
+        if [[ -z $url_format ]]; then
             __zplug::io::print::f \
                 --die \
                 --zplug \
                 --error \
-                "pathspec '$tags[at]' (at tag) did not match ($repo)\n"
-            ret=1
+                "$repo is an invalid 'user/repo' format.\n"
+            return 1
         fi
-        )
+
+        git clone \
+            ${=depth_option} \
+            --recursive \
+            --quiet \
+            "$url_format" "$tags[dir]" &>/dev/null
+        ret=$status
     fi
+
+    # The revison (hash/branch/tag) lock
+    __zplug::utils::git::checkout "$repo"
+    ret=$status
 
     return $ret
 }
@@ -52,7 +64,7 @@ __zplug::utils::git::checkout()
     local -a do_not_checkout
     local -A tags
 
-    do_not_checkout=( "local" "gh-r" )
+    do_not_checkout=( "gh-r" )
     tags[at]="$(__zplug::core::core::run_interfaces 'at' "$repo")"
     tags[dir]="$(__zplug::core::core::run_interfaces 'dir' "$repo")"
     tags[from]="$(__zplug::core::core::run_interfaces 'from' "$repo")"

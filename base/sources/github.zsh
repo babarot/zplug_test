@@ -33,11 +33,11 @@ __zplug::sources::github::update()
     return $status
 }
 
-__zplug::sources::github::clone()
+__zplug::sources::github::get_url()
 {
-    local repo="${1:?}"
+    local repo="${1:?}" url_format
 
-    case $ZPLUG_PROTOCOL in
+    case "$ZPLUG_PROTOCOL" in
         HTTPS | https)
             # Create the format of URL used to git clone
             # When vim-plug clones a repository, it injects git::@ into the URL
@@ -63,31 +63,7 @@ __zplug::sources::github::clone()
             ;;
     esac
 
-    tag_depth="$(
-    __zplug::core::core::run_interfaces \
-        'depth' \
-        "$repo"
-    )"
-    if (( $tag_depth == 0 )); then
-        tag_depth=""
-    else
-        tag_depth="--depth=$tag_depth"
-    fi
-
-    if [[ -z $url_format ]]; then
-        __zplug::io::print::f \
-            --die \
-            --zplug \
-            --error \
-            "$repo is an invalid 'user/repo' format.\n"
-        return 1
-    fi
-
-    git clone \
-        ${=tag_depth} \
-        --recursive \
-        --quiet \
-        "$url_format" "$ZPLUG_REPOS/$repo" &>/dev/null
+    echo "$url_format"
 }
 
 __zplug::sources::github::load_plugin()
