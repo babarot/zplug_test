@@ -154,3 +154,9 @@ __zplug::utils::shell::cd()
 
     return 1
 }
+
+__zplug::utils::shell::getopts()
+{
+    printf "%s\n" "$argv[@]" \
+        | awk -f "$ZPLUG_ROOT/misc/contrib/getopts.awk"
+}

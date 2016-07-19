@@ -1,68 +1,74 @@
-function add(k, v) {
-    if (seen[k v]++) return
-    print k (v == "" ? "" : " "v)
+function out(k,v) {
+    print(k "" (v == "" ? "" : " "v))
 }
 
 function pop() {
-    return (size <= 0) ? "_" : stack[size--]
+    return len <= 0 ? "_" : opt[len--]
 }
 
-function push(k) {
-    stack[++size] = k
-}
-
-function flush() {
-    while (size) {
-        add(pop())
-    }
-}
-
-$0 == "" { next }
-
-done {
-    add("_" , $1$2$3)
-    next
-}
-
-$1 == "--" && !$2 {
-    done = 1
-    next
-}
-
-$1 !~ /^-|^--/ {
-    add(pop(), $0)
-    next
-}
-
-size { flush() }
-
-$3 {
-    for (i = 4; i <= NF; i++)
-        $3 = $3" "$i
-}
-
-$1 == "--" {
-    if ($3 == "")
-        push($2)
-    else
-        add($2, $3)
-}
-
-$1 == "-" {
-    if ($2 == "") {
-        print $1
+{
+    if (done) {
+        out("_" , $0)
         next
-    } else {
-        n = split($2, keys, "")
     }
 
-    if ($3 == "")
-        push(keys[n])
-    else
-        add(keys[n], $3)
+    if (match($0, "^-[A-Za-z]+")) {
+        $0 = "- " substr($0, 2, RLENGTH - 1) " " substr($0, RLENGTH + 1)
 
-    for (i = 1; i < n; i++)
-        add(keys[i])
+    } else if (match($0, "^--[A-Za-z0-9_-]+")) {
+        $0 = "-- " substr($0, 3, RLENGTH - 2) " " substr($0, RLENGTH + 2)
+    }
+
+    if ($1 == "--" && $2 == "") {
+        done = 1
+
+    } else if ($2 == "" || $1 !~ /^-|^--/ ) {
+        out(pop(), $0)
+
+    } else {
+        while (len) {
+            out(pop())
+        }
+
+        if ($3 != "") {
+            if (match($0, $2)) {
+                $3 = substr($0, RSTART + RLENGTH + 1)
+            }
+        }
+
+        if ($1 == "--") {
+            if ($3 == "") {
+                opt[++len] = $2
+            } else {
+                out($2, $3)
+            }
+        }
+
+        if ($1 == "-") {
+            if ($2 == "") {
+                print($1)
+                next
+
+            } else {
+                n = split($2, keys, "")
+            }
+
+            if ($3 == "") {
+                opt[++len] = keys[n]
+
+            } else {
+                out(keys[n], $3)
+            }
+
+            for (i = 1; i < n; i++) {
+                out(keys[i])
+            }
+        }
+    }
 }
 
-END { flush() }
+END {
+    while (len) {
+        out(pop())
+    }
+}

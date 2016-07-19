@@ -23,55 +23,19 @@ __zplug::sources::oh-my-zsh::install()
 
 __zplug::sources::oh-my-zsh::update()
 {
-    local repo="${1:?}"
-    local top_dir="$ZPLUG_REPOS/$_ZPLUG_OHMYZSH"
-    local rev_local rev_remote rev_base
+    local    repo="${1:?}"
+    local    top_dir="$ZPLUG_REPOS/$_ZPLUG_OHMYZSH"
+    local    rev_local rev_remote rev_base
     local -A tags
 
     tags[dir]="$top_dir"
     tags[at]="$(__zplug::core::core::run_interfaces 'at' "$repo")"
 
-    {
-        # EXIT CODE
-        # 0: Updated successfully
-        # 1: Failed to update
-        # 2: Repo is not found
-        # 3: Repo has frozen tag
-        # 4: Up-to-date
+    __zplug::utils::git::merge \
+        --dir    "$tags[dir]" \
+        --branch "$tags[at]"
 
-        __zplug::utils::shell::cd "$tags[dir]" || return 2
-
-        if [[ -e $tags[dir]/.git/shallow ]]; then
-            git fetch --unshallow
-        else
-            git fetch
-        fi
-        git checkout -q "$tags[at]"
-
-        rev_local="$(git rev-parse HEAD)"
-        rev_remote="$(git rev-parse "@{u}")"
-        rev_base="$(git merge-base HEAD "@{u}")"
-
-        if [[ $rev_local == $rev_remote ]]; then
-            # up-to-date
-            return 4
-        elif [[ $rev_local == $rev_base ]]; then
-            # need to pull
-            git merge --ff-only origin/$tags[at] \
-                && git submodule update --init --recursive
-            # It can be expected to be successful
-            return $status
-        elif [[ $rev_remote == $rev_base ]]; then
-            # need to push
-            return 1
-        else
-            # Diverged
-            return 1
-        fi
-    } &>/dev/null
-
-    # success
-    return 0
+    return $status
 }
 
 __zplug::sources::oh-my-zsh::clone()

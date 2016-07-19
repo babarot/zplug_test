@@ -66,12 +66,15 @@ __zplug::utils::git::checkout()
     (
     __zplug::utils::shell::cd \
         "$tags[dir]" \
-        "$tags[dir]:h" || \
+        "$tags[dir]:h"
+    if (( $status != 0 )); then
         __zplug::io::print::f \
-        --die \
-        --zplug \
-        --error \
-        "no such directory '$tags[dir]' ($repo)\n"
+            --die \
+            --zplug \
+            --error \
+            "no such directory '$tags[dir]' ($repo)\n"
+        return 1
+    fi
 
     git checkout -q "$tags[at]" &>/dev/null
     if (( $status != 0 )); then
@@ -82,6 +85,75 @@ __zplug::utils::git::checkout()
             "pathspec '$tags[at]' (at tag) did not match ($repo)\n"
     fi
     )
+}
+
+__zplug::utils::git::merge()
+{
+    # EXIT CODE
+    # 0: Updated successfully
+    # 1: Failed to update
+    # 2: Repo is not found
+    # 3: Repo has frozen tag
+    # 4: Up-to-date
+    local -i SUCCESS=0
+    local -i FAILURE=1
+    local -i REPO_NOT_FOUND=2
+    local -i FROZEN_REPO=3
+    local -i UP_TO_DATE=4
+
+    local    key value
+    local    opt arg
+    local -A git
+
+    __zplug::utils::shell::getopts "$argv[@]" \
+        | while read key value; \
+    do
+        case "$key" in
+            dir)
+                git[dir]="$value"
+                ;;
+            branch)
+                git[branch]="$value"
+                ;;
+        esac
+    done
+
+    __zplug::utils::shell::cd \
+        "$git[dir]" || return $REPO_NOT_FOUND
+
+    {
+        if [[ -e $git[dir]/.git/shallow ]]; then
+            git fetch --unshallow
+        else
+            git fetch
+        fi
+        git checkout -q "$git[branch]"
+    } &>/dev/null
+
+    git[local]="$(git rev-parse HEAD)"
+    git[upstream]="$(git rev-parse "@{upstream}")"
+    git[base]="$(git merge-base HEAD "@{upstream}")"
+
+    if [[ $git[local] == $git[upstream] ]]; then
+        # up-to-date
+        return $UP_TO_DATE
+    elif [[ $git[local] == $git[base] ]]; then
+        # need to pull
+        {
+            git merge --ff-only "origin/$git[branch]"
+            git submodule update --init --recursive
+        } &>/dev/null
+        # It can be expected to be successful
+        return $status
+    elif [[ $git[upstream] == $git[base] ]]; then
+        # need to push
+        return $FAILURE
+    else
+        # Diverged
+        return $FAILURE
+    fi
+
+    return $SUCCESS
 }
 
 __zplug::utils::git::status()
