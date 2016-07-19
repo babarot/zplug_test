@@ -27,10 +27,10 @@ __zplug::core::self::install()
     __zplug::sources::github::install "zplug/zplug"
 }
 
-__zplug::core::self::get_url()
-{
-    __zplug::sources::github::get_url "zplug/zplug"
-}
+#__zplug::core::self::get_url()
+#{
+#    __zplug::sources::github::get_url "zplug/zplug"
+#}
 
 __zplug::core::self::update()
 {

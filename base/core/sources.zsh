@@ -25,7 +25,8 @@ __zplug::core::sources::is_handler_defined()
 # Call the handler of the external source if defined
 __zplug::core::sources::use_handler()
 {
-    local subcommand source_name handler_name repo
+    local subcommand source_name repo
+    local handler_name handler_for_zplug
 
     subcommand="${1:?}"
     source_name="${2:?}"
@@ -34,8 +35,16 @@ __zplug::core::sources::use_handler()
 
     case "$repo" in
         "zplug/zplug")
-            handler_name="__zplug::core::self::$subcommand"
-            (( $+functions[$handler_name] )) || return 1
+            # zplug is hosted in github.com
+            handler_name="__zplug::sources::github::$subcommand"
+            # handler for zplug
+            handler_for_zplug="__zplug::core::self::$subcommand"
+
+            # Use the handler as from:github
+            # if the handler for zplug ('self') is not defined
+            (( $+functions[$handler_for_zplug] )) ||
+                (( $+functions[$handler_name] )) ||
+                return 1
             ;;
         *)
             if ! __zplug::core::sources::is_handler_defined "$subcommand" "$source_name"; then
