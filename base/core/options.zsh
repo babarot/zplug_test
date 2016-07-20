@@ -63,7 +63,9 @@ __zplug::core::options::long()
     local opt="${arg#--}"
 
     if [[ -f $ZPLUG_ROOT/autoload/options/__${opt}__ ]]; then
-        eval '__${opt}__ "$argv[@]"'
+        __zplug::core::core::run_interfaces \
+            "$opt" \
+            "$argv[@]"
         return $status
     else
         __zplug::io::print::f \
