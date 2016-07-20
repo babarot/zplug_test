@@ -25,33 +25,28 @@ __zplug::core::sources::is_handler_defined()
 # Call the handler of the external source if defined
 __zplug::core::sources::use_handler()
 {
-    local subcommand source_name repo
-    local handler_name handler_for_zplug
-
-    subcommand="${1:?}"
-    source_name="${2:?}"
-    handler_name="__zplug::sources::$source_name::$subcommand"
-    repo="${3:?}"
+    local \
+        subcommand="${1:?}" \
+        source_name="${2:?}" \
+        repo="${3:?}"
+    local handler_name="__zplug::sources::$source_name::$subcommand"
 
     case "$repo" in
         "zplug/zplug")
-            # zplug is hosted in github.com
-            handler_name="__zplug::sources::github::$subcommand"
-            # handler for zplug
-            handler_for_zplug="__zplug::core::self::$subcommand"
-
-            # Use the handler as from:github
-            # if the handler for zplug ('self') is not defined
-            (( $+functions[$handler_for_zplug] )) ||
-                (( $+functions[$handler_name] )) ||
+            # Search the handler that has a name including 'self' word
+            handler_name="__zplug::core::self::$subcommand"
+            (( $+functions[$handler_name] )) ||
+                handler_name="__zplug::sources::github::$subcommand"
+            # If it isn't found, search another handler
+            # Nevertheless, callback is undefined
+            (( $+functions[$handler_name] )) ||
                 return 1
             ;;
         *)
             if ! __zplug::core::sources::is_handler_defined "$subcommand" "$source_name"; then
-                # Callback function undefined
+                # Callback function is undefined
                 return 1
             fi
-
             ;;
     esac
 
