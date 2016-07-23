@@ -11,25 +11,14 @@ __zplug::io::report::with_json()
     # - $funcstack[@]
     # - $functrace[@]
 
-    local -a header results
-    local    w=""
-    local -i i=0
+    local -i i
+    local -a results
 
     # Assume the stdin that should be discarded to /dev/null
     results=( ${(@f)"$(<&0)"} )
     if (( $#results == 0 )); then
         return 1
     fi
-
-    header=()
-    header+=( "[$(date +"%Y/%m/%d %T")]" )
-    header+=( "${PWD/$HOME/~}" )
-
-    # Make spaces
-    for ((; i < ${#${header[*]}}; i++))
-    do
-        w="$w "
-    done
 
     # Spit out to JSON
     printf '{'
