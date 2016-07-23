@@ -177,6 +177,7 @@ __zplug::core::core::variable()
     typeset -gx    ZPLUG_CACHE_FILE=${ZPLUG_CACHE_FILE:-$ZPLUG_HOME/.cache}
     typeset -gx    ZPLUG_REPOS=${ZPLUG_REPOS:-$ZPLUG_HOME/repos}
     typeset -gx    ZPLUG_SUDO_PASSWORD
+    typeset -gx    ZPLUG_ERROR_LOG=${ZPLUG_ERROR_LOG:-$ZPLUG_HOME/.error_log}
 
     typeset -gx    _ZPLUG_VERSION="2.1.0"
     typeset -gx    _ZPLUG_URL="https://github.com/zplug/zplug"

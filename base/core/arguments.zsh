@@ -26,8 +26,12 @@ __zplug::core::arguments::auto_correct()
     local -a cmds reply_cmds
 
     reply_cmds=()
+
+    # Add user-defined commands
     __zplug::core::commands::user_defined
     reply_cmds+=( "${reply[@]}" )
+
+    # Add zplug subcommands
     __zplug::core::commands::get --key
     reply_cmds+=( "${reply[@]}" )
 

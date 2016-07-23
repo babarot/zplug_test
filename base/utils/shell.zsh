@@ -148,7 +148,9 @@ __zplug::utils::shell::cd()
             [[ -d $dir ]] || mkdir -p "$dir"
         fi
 
-        builtin cd "$dir" &>/dev/null
+        builtin cd "$dir" \
+            2>&1 | __zplug::io::report::save
+        __zplug::utils::shell::pipestatus
         return $status
     done
 
@@ -159,4 +161,12 @@ __zplug::utils::shell::getopts()
 {
     printf "%s\n" "$argv[@]" \
         | awk -f "$ZPLUG_ROOT/misc/contrib/getopts.awk"
+}
+
+__zplug::utils::shell::pipestatus()
+{
+    local _status="${pipestatus[*]-}"
+
+    [[ ${_status//0 /} == 0 ]]
+    return $status
 }

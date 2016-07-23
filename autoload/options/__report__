@@ -1,0 +1,14 @@
+#!/bin/zsh
+# Description:
+#   Show the report of zplug errors
+
+if [[ ! -f $ZPLUG_ERROR_LOG ]] || [[ ! -s $ZPLUG_ERROR_LOG ]]; then
+    __zplug::io::print::f \
+        --die \
+        --zplug \
+        --error \
+        "ZPLUG_ERROR_LOG: is not found or empty\n"
+    return 1
+fi
+
+cat "$ZPLUG_ERROR_LOG" | ${=PAGER:-less}
