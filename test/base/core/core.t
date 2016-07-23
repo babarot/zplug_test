@@ -7,6 +7,9 @@ T_SUB "__zplug::core::core::run_interfaces" ((
 T_SUB "__zplug::core::core::reload" ((
   # skip
 ))
+T_SUB "__zplug::core::core::prepare" ((
+  # skip
+))
 T_SUB "__zplug::core::core::variable" ((
   # skip
 ))

@@ -1,6 +1,6 @@
 __zplug::core::arguments::exec()
 {
-    local arg="${1:?}" cmd
+    local arg="${1:?}"
 
     reply=()
     __zplug::core::commands::user_defined

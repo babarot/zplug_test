@@ -16,3 +16,6 @@ T_SUB "__zplug::utils::shell::unansi" ((
 T_SUB "__zplug::utils::shell::cd" ((
   # skip
 ))
+T_SUB "__zplug::utils::shell::getopts" ((
+  # skip
+))

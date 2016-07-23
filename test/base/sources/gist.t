@@ -7,7 +7,7 @@ T_SUB "__zplug::sources::gist::install" ((
 T_SUB "__zplug::sources::gist::update" ((
   # skip
 ))
-T_SUB "__zplug::sources::gist::clone" ((
+T_SUB "__zplug::sources::gist::get_url" ((
   # skip
 ))
 T_SUB "__zplug::sources::gist::load_plugin" ((

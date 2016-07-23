@@ -7,7 +7,7 @@ T_SUB "__zplug::sources::oh-my-zsh::install" ((
 T_SUB "__zplug::sources::oh-my-zsh::update" ((
   # skip
 ))
-T_SUB "__zplug::sources::oh-my-zsh::clone" ((
+T_SUB "__zplug::sources::oh-my-zsh::get_url" ((
   # skip
 ))
 T_SUB "__zplug::sources::oh-my-zsh::load_plugin" ((

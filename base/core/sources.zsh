@@ -59,9 +59,12 @@ __zplug::core::sources::call()
     local val="${1:?}"
 
     if __zplug::core::sources::is_exists "$val"; then
-        autoload -Uz "$val.zsh"
-        eval "$val.zsh"
-        unfunction "$val.zsh"
+        {
+            # Directory '/base/sources' needs to be included in FPATH
+            autoload -Uz "$val.zsh"
+            eval "$val.zsh"
+            unfunction "$val.zsh"
+        } &>/dev/null
     fi
 }
 

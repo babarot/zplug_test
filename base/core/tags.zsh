@@ -23,10 +23,8 @@ __zplug::core::tags::parse()
             "$tag" \
             "$arg"
         )"
-        pairs+=(
-        "$tag" "$val"
-        )
+        pairs+=("$tag" "$val")
     done
 
-    reply=( "${pairs[@]}" )
+    reply=( "$pairs[@]" )
 }

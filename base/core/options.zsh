@@ -41,11 +41,9 @@ __zplug::core::options::parse()
                 ;;
         esac
         shift
-
-        if (( $ret != 0  )); then
-            return $ret
-        fi
     done
+
+    return $ret
 }
 
 __zplug::core::options::short()
@@ -53,7 +51,7 @@ __zplug::core::options::short()
     __zplug::io::print::f \
         --die \
         --zplug \
-        "$arg: not yet available\n"
+        "$arg: no such option\n"
     return 1
 }
 

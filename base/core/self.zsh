@@ -17,43 +17,29 @@ __zplug::core::self::init()
     ln -snf "$src" "$dst"
 }
 
-__zplug::core::self::check()
-{
-    __zplug::sources::github::check "zplug/zplug"
-}
-
-__zplug::core::self::install()
-{
-    __zplug::sources::github::install "zplug/zplug"
-}
-
-#__zplug::core::self::get_url()
-#{
-#    __zplug::sources::github::get_url "zplug/zplug"
-#}
-
 __zplug::core::self::update()
 {
-    local head
+    local HEAD
 
     # If there is a difference in the remote and local
     # re-install zplug by itself and initialize
-    if ! __zplug::core::self::status --up-to-date; then
+    if ! __zplug::core::self::info --up-to-date; then
+        # TODO:
         __zplug::core::core::run_interfaces \
             "update" \
             "zplug/zplug"
         return $status
     fi
 
-    __zplug::core::self::status --head \
-        | read head
+    __zplug::core::self::info --HEAD \
+        | read HEAD
     __zplug::io::print::f \
         --die \
         --zplug \
         "%s (v%s) %s\n" \
         "$fg[white]up-to-date$reset_color" \
         "$_ZPLUG_VERSION" \
-        "$em[under]$head[1,8]$reset_color"
+        "$em[under]$HEAD[1,8]$reset_color"
 
     return 1
 }
@@ -63,7 +49,7 @@ __zplug::core::self::load()
     __zplug::core::self::init
 }
 
-__zplug::core::self::status()
+__zplug::core::self::info()
 {
     local    arg
     local -A revisions
@@ -85,7 +71,7 @@ __zplug::core::self::status()
             --local)
                 echo "$revisions[local]"
                 ;;
-            --head)
+            --HEAD)
                 echo "$revisions[master]"
                 ;;
             --version)

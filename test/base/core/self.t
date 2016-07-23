@@ -1,7 +1,4 @@
-T_SUB "__zplug::core::self::check" ((
-  # skip
-))
-T_SUB "__zplug::core::self::clone" ((
+T_SUB "__zplug::core::self::init" ((
   # skip
 ))
 T_SUB "__zplug::core::self::update" ((
@@ -10,6 +7,6 @@ T_SUB "__zplug::core::self::update" ((
 T_SUB "__zplug::core::self::load" ((
   # skip
 ))
-T_SUB "__zplug::core::self::status" ((
+T_SUB "__zplug::core::self::info" ((
   # skip
 ))

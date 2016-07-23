@@ -26,6 +26,11 @@ do
             repos+=( "${arg:gs:@::}" )
             ;;
         *)
+            __zplug::io::print::f \
+                --die \
+                --zplug \
+                --error \
+                "$arg: invalid argument\n"
             return 1
             ;;
     esac
@@ -37,7 +42,7 @@ if (( $#repos == 0 )); then
     __zplug::io::print::put \
         "%d plugs, %s\n" \
         $#zplugs \
-        $(du -ch "$ZPLUG_REPOS" | awk '$2 == "total"{print $1}')
+        "$(du -ch "$ZPLUG_REPOS" | awk '$2 == "total"{print $1}')"
     return 1
 fi
 

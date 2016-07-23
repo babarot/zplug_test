@@ -15,6 +15,13 @@ __zplug::core::v1::tags()
         "do")
             new_key="hook-build"
             ;;
+        *)
+            # Not old tag
+            __zplug::io::print::f \
+                --die \
+                --zplug \
+                "$key: this tag is still good\n"
+            return 1
     esac
 
     __zplug::io::print::f \

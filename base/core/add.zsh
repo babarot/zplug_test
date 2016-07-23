@@ -6,7 +6,7 @@ __zplug::core::add::to_zplugs()
     local -a re_tags
 
     tags=( ${(s/, /)@:gs/,  */, } )
-    name="${tags[1]}"
+    name="$tags[1]"
     tags[1]=()
 
     # DEPRECATED: pipe
@@ -41,7 +41,8 @@ __zplug::core::add::to_zplugs()
 
     name="$(__zplug::core::add::proc_at-sign "$name")"
 
-    # as:itself
+    # Automatically add "as:itself" to tag array
+    # if $name is zplug repository
     if [[ $name == "zplug/zplug" ]]; then
         re_tags="as:itself"
     fi
@@ -55,6 +56,7 @@ __zplug::core::add::to_zplugs()
         if (( $+_zplug_tags[$key] )); then
             case $key in
                 "of" | "file" | "commit" | "do")
+                    # DEPRECATED: old tags
                     __zplug::core::v1::tags "$key"
                     ;;
                 "from")
@@ -62,21 +64,23 @@ __zplug::core::add::to_zplugs()
                     ;;
             esac
 
-            # Reconstruct
-            re_tags+=("$key:$val")
+            re_tags+=( "$key:$val" )
         else
             __zplug::io::print::f \
                 --die \
                 --zplug \
-                "$tag: $key is invalid tag name\n"
+                "$tag: '$key' is invalid tag name\n"
             return 1
         fi
     done
 
-    # In case of that from tag is default
+    # In case of that 'from' tag is default value
     __zplug::core::sources::use_default
 
-    # Add to zplugs
+    # Add to zplugs (hash array)
+    # "$name" "$re_tags[@]" (<-- "key" "value")
+    #   \       `-- '"as:plugin, from:github"'
+    #    `-- e.g. 'enhancd'
     zplugs+=("$name" "${(j:, :)re_tags[@]:-}")
 }
 
@@ -85,15 +89,16 @@ __zplug::core::add::proc_at-sign()
     local    name="${1:?}" key
     local -i max=0
 
-    if __zplug::base::base::zpluged; then
-        for key in "${(k)zplugs[@]}"
-        do
-            if [[ $key =~ ^$name@*$ ]] && (( $max < $#key )); then
-                max=$#key
-                name="${key}@"
-            fi
-        done
+    if ! __zplug::base::base::zpluged; then
+        return 1
     fi
 
+    for key in "${(k)zplugs[@]}"
+    do
+        if [[ $key =~ ^$name@*$ ]] && (( $max < $#key )); then
+            max=$#key
+            name="${key}@"
+        fi
+    done
     echo "$name"
 }

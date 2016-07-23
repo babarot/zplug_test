@@ -7,7 +7,7 @@ T_SUB "__zplug::sources::bitbucket::install" ((
 T_SUB "__zplug::sources::bitbucket::update" ((
   # skip
 ))
-T_SUB "__zplug::sources::bitbucket::clone" ((
+T_SUB "__zplug::sources::bitbucket::get_url" ((
   # skip
 ))
 T_SUB "__zplug::sources::bitbucket::load_plugin" ((

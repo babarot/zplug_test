@@ -3,7 +3,7 @@ __zplug::job::hook::service()
     local    repo="${1:?}" hook="${2:?}"
     local -A tags
 
-    __zplug::core::tags::parse "$repo"
+    __zplug::core::tags::parse "$repo" || return 1
     tags=( "${reply[@]}" )
 
     # There is no $hook file in /autoload/tags directory
@@ -11,7 +11,7 @@ __zplug::job::hook::service()
         __zplug::io::print::f \
             --die \
             --zplug \
-            "'%s' is not defined (%s)\n" \
+            "'%s' is not defined as a hook (%s)\n" \
             "$hook" \
             "$fg[green]$repo$reset_color"
         return 1

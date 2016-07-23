@@ -28,7 +28,7 @@ zplug_cmds=(
 # Completions for user-defined commands
 for p in ${^path}/zplug-*(N-.)
 do
-    desc="$(sed -n '2p' "$p" | sed -E 's/^.*desc(ription)?: ?//')"
+    desc="$(sed -n '2p' "$p" | sed -E 's/^.*[Dd]esc(ription)?: ?//')"
     desc="${desc:+"\[User-defined\] $desc"}"
     zplug_cmds+=("${p:t:gs:zplug-:}:${desc:-"User-defined command"}")
 done

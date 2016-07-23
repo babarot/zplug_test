@@ -1,9 +1,10 @@
 #!/usr/bin/env zsh
 
-# Hash Array for zplug
+# A hash array for zplug
 typeset -gx -A zplugs
 zplugs=()
 
+# A variable as a starting point of zplug
 typeset -gx ZPLUG_ROOT="${${(%):-%N}:A:h}"
 
 # Load basic functions such as an __zplug::base function
@@ -23,7 +24,7 @@ if ! __zplug::core::core::prepare; then
         --die \
         --zplug \
         --error \
-        "Stopped to load zplug. Bye\n"
+        "The loading of zplug was discontinued.\n"
     return 1
 fi
 

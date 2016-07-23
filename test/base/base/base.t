@@ -51,9 +51,13 @@ T_SUB "__zplug::base::base::is_linux" ((
 ))
 
 T_SUB "__zplug::base::base::packaging" ((
-  # skip
-))
+  local    expect actual
+  local -A zplugs
+  zplugs=("my_plugin" "as:plugin")
 
-T_SUB "__zplug::base::base::is_autoload" ((
-  # skip
+  expect="my_plugin"
+  __zplug::base::base::packaging "my_plugin" \
+    | read actual
+
+  t_is "$expect" "$actual"
 ))

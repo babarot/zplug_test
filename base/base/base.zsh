@@ -123,18 +123,3 @@ __zplug::base::base::packaging()
         -f "$_ZPLUG_AWKPATH/packaging.awk" \
         -v pkg="${1:?}"
 }
-
-__zplug::base::base::is_autoload()
-{
-    if (( $ARGC != 1 )); then
-        return 1
-    fi
-
-    autoload \
-        | grep '{$' \
-        | sed 's/ () {$//' \
-        | grep -x "$1" \
-        &>/dev/null
-
-    return $status
-}

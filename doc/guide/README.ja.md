@@ -55,7 +55,7 @@ $ brew install zplug
 
 ### git から
 
-Cloning from GitHub, and source `init.zsh`:
+GitHub からクローンしてきて `init.zsh` を読み込む:
 
 ```console
 $ export ZPLUG_HOME=/path/to/.zplug
@@ -70,10 +70,10 @@ $ git clone https://github.com/zplug/zplug $ZPLUG_HOME
 
 ## 利用方法
 
-Add a zplug section to your `.zshrc`:
+`.zshrc` に以下を書き込む:
 
-1. List the packages with `zplug` commands
-2. `zplug load` to source the plugins and add commands to your `$PATH`
+1. `zplug` commands でインストールするパッケージについて書く
+2. `zplug load` によりプラグインを読み込み、コマンドを `$PATH` に追加するようにする
 
 ### Example
 

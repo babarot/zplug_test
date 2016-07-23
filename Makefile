@@ -1,8 +1,4 @@
 ZPLUG_ROOT  := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
-
-LICENSE_URL := http://b4b4r07.mit-license.org
-LICENSE_TXT := $(ZPLUG_ROOT)/doc/LICENSE-MIT.txt
-
 SHOVE_URL   := https://github.com/key-amb/shove
 SHOVE_DIR   := $(ZPLUG_ROOT)/.ignore/shove
 
@@ -22,9 +18,6 @@ shove: # Grab shove from GitHub and grant execution
 
 test: shove ## Unit test for zplug
 	ZPLUG_ROOT=$(ZPLUG_ROOT) $(SHOVE_DIR)/bin/shove -r test -s zsh
-
-license: ## Generate License
-	@curl -fsSL -o $(LICENSE_TXT) $(LICENSE_URL)
 
 help: ## Self-documented Makefile
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \

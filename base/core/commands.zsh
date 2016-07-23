@@ -9,11 +9,12 @@ __zplug::core::commands::user_defined()
 {
     local -a user_cmds
 
+    # reset
     reply=()
 
     user_cmds=( ${^path[@]}/zplug-*(N-.:t:gs:zplug-:) )
     if (( $#user_cmds > 0 )); then
-        # Unique
+        # Be unique
         reply+=( "${(u)user_cmds[@]}" )
         return 0
     fi
