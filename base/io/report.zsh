@@ -29,12 +29,15 @@ __zplug::io::report::with_json()
     printf '"trace": {'
     for ((i = 1; i < $#functrace; i++))
     do
-        # Comma
-        printf "\"%s\": \"%s\"," \
+        # With comma
+        printf '"%s": "%s",' \
             "$functrace[$i]" \
             "$funcstack[$i]"
     done
-    printf "\"%s\": \"%s\"" "$functrace[$#functrace]" "$funcstack[$#funcstack]"
+    # Without comma
+    printf '"%s": "%s"' \
+        "$functrace[$#functrace]" \
+        "$funcstack[$#funcstack]"
     printf "}}\n"
 }
 

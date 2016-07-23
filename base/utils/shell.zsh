@@ -149,8 +149,7 @@ __zplug::utils::shell::cd()
         fi
 
         builtin cd "$dir" \
-            2>&1 | __zplug::io::report::save
-        __zplug::utils::shell::pipestatus
+            2> >(__zplug::io::report::save) >/dev/null
         return $status
     done
 
