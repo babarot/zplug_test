@@ -77,7 +77,13 @@ if (( $#repos > 0 )); then
     copy_zplugs=()
     for repo in "${repos[@]}"
     do
-        if __zplug::core::core::zpluged "$repo"; then
+        if __zplug::base::base::zpluged "$repo"; then
+            # TODO:
+            # @ (at-sign)
+            # e.g. zplug list b4b4r07/enhancd
+            # -> b4b4r07/enhancd
+            # -> b4b4r07/enhancd (b4b4r07/enhancd@)
+
             # It's already managed
             copy_zplugs+=(
             "$repo"
@@ -97,7 +103,7 @@ if (( $#repos > 0 )); then
             fi
             for repo in "${similar_repos[@]}"
             do
-                if __zplug::core::core::zpluged "$repo"; then
+                if __zplug::base::base::zpluged "$repo"; then
                     copy_zplugs+=(
                     "$repo"
                     "${zplugs[$repo]}"
@@ -112,7 +118,7 @@ fi
 
 dq='"'
 dq="$(print -nP -- "%F{000}$dq%f")"
-for copy in "${(k)copy_zplugs[@]:gs:@::}"
+for copy in "${(k)copy_zplugs[@]}"
 do
     tag="nil"
     if [[ -n $copy_zplugs[$copy] ]]; then
@@ -121,7 +127,7 @@ do
             | read tag
     fi
     printf "%s  =>  %s\n" \
-        "$fg[green]$copy$reset_color" \
+        "$fg[green]${copy:gs:@::}$reset_color" \
         "$tag"
 done
 

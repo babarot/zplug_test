@@ -32,7 +32,6 @@ __zplug::sources::gh-r::install()
 __zplug::sources::gh-r::update()
 {
     local repo="${1:?}"
-    local repo_path="$ZPLUG_REPOS/$repo"
     local index url
     local -A tags
 
@@ -53,10 +52,10 @@ __zplug::sources::gh-r::update()
     # 2: Repo is not found
     # 3: Repo has frozen tag
     # 4: Up-to-date
-    if [[ -d $repo_path ]]; then
+    if [[ -d $tags[dir] ]]; then
         # Update
-        if [[ -f $repo_path/INDEX ]]; then
-            index="$(<"$repo_path/INDEX")"
+        if [[ -f $tags[dir]/INDEX ]]; then
+            index="$(<"$tags[dir]/INDEX")"
             if [[ $tags[at] == "latest" ]]; then
                 if grep -q "$index" <<<"$url"; then
                     # up-to-date

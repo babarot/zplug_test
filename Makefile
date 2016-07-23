@@ -1,6 +1,7 @@
 ZPLUG_ROOT  := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 SHOVE_URL   := https://github.com/key-amb/shove
 SHOVE_DIR   := $(ZPLUG_ROOT)/.ignore/shove
+TEST_TARGET ?= test
 
 .DEFAULT_GOAL := help
 
@@ -17,7 +18,7 @@ shove: # Grab shove from GitHub and grant execution
 		fi
 
 test: shove ## Unit test for zplug
-	ZPLUG_ROOT=$(ZPLUG_ROOT) $(SHOVE_DIR)/bin/shove -r test -s zsh
+	ZPLUG_ROOT=$(ZPLUG_ROOT) $(SHOVE_DIR)/bin/shove -r $(TEST_TARGET) -s zsh
 
 help: ## Self-documented Makefile
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \

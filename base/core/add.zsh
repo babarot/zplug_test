@@ -89,10 +89,6 @@ __zplug::core::add::proc_at-sign()
     local    name="${1:?}" key
     local -i max=0
 
-    if ! __zplug::base::base::zpluged; then
-        return 1
-    fi
-
     for key in "${(k)zplugs[@]}"
     do
         if [[ $key =~ ^$name@*$ ]] && (( $max < $#key )); then
@@ -100,5 +96,6 @@ __zplug::core::add::proc_at-sign()
             name="${key}@"
         fi
     done
+
     echo "$name"
 }
