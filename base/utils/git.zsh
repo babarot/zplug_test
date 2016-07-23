@@ -101,18 +101,6 @@ __zplug::utils::git::checkout()
 
 __zplug::utils::git::merge()
 {
-    # EXIT CODE
-    # 0: Updated successfully
-    # 1: Failed to update
-    # 2: Repo is not found
-    # 3: Repo has frozen tag
-    # 4: Up-to-date
-    local -i SUCCESS=0
-    local -i FAILURE=1
-    local -i REPO_NOT_FOUND=2
-    local -i FROZEN_REPO=3
-    local -i UP_TO_DATE=4
-
     local    key value
     local    opt arg
     local -A git
@@ -131,7 +119,7 @@ __zplug::utils::git::merge()
     done
 
     __zplug::utils::shell::cd \
-        "$git[dir]" || return $REPO_NOT_FOUND
+        "$git[dir]" || return $_ZPLUG_STATUS_REPO_NOT_FOUND
 
     {
         if [[ -e $git[dir]/.git/shallow ]]; then
@@ -148,7 +136,7 @@ __zplug::utils::git::merge()
 
     if [[ $git[local] == $git[upstream] ]]; then
         # up-to-date
-        return $UP_TO_DATE
+        return $_ZPLUG_STATUS_REPO_UP_TO_DATE
     elif [[ $git[local] == $git[base] ]]; then
         # need to pull
         {
@@ -159,13 +147,13 @@ __zplug::utils::git::merge()
         return $status
     elif [[ $git[upstream] == $git[base] ]]; then
         # need to push
-        return $FAILURE
+        return $_ZPLUG_STATUS_FAILURE
     else
         # Diverged
-        return $FAILURE
+        return $_ZPLUG_STATUS_FAILURE
     fi
 
-    return $SUCCESS
+    return $_ZPLUG_STATUS_SUCCESS
 }
 
 __zplug::utils::git::status()

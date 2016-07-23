@@ -176,11 +176,25 @@ __zplug::core::core::variable()
     typeset -gx    ZPLUG_USE_CACHE=${ZPLUG_USE_CACHE:-true}
     typeset -gx    ZPLUG_CACHE_FILE=${ZPLUG_CACHE_FILE:-$ZPLUG_HOME/.cache}
     typeset -gx    ZPLUG_REPOS=${ZPLUG_REPOS:-$ZPLUG_HOME/repos}
+    typeset -gx    ZPLUG_SUDO_PASSWORD
+
     typeset -gx    _ZPLUG_VERSION="2.1.0"
     typeset -gx    _ZPLUG_URL="https://github.com/zplug/zplug"
     typeset -gx    _ZPLUG_OHMYZSH="robbyrussell/oh-my-zsh"
     typeset -gx    _ZPLUG_AWKPATH="$ZPLUG_ROOT/misc/contrib"
-    typeset -gx    ZPLUG_SUDO_PASSWORD
+
+    typeset -gx -i _ZPLUG_STATUS_SUCCESS=0
+    typeset -gx -i _ZPLUG_STATUS_FAILURE=1
+    typeset -gx -i _ZPLUG_STATUS_TRUE=0
+    typeset -gx -i _ZPLUG_STATUS_FALSE=1
+    typeset -gx -i _ZPLUG_STATUS_REPO_NOT_FOUND=2
+    typeset -gx -i _ZPLUG_STATUS_REPO_FROZEN=3
+    typeset -gx -i _ZPLUG_STATUS_REPO_UP_TO_DATE=4
+    typeset -gx -i _ZPLUG_STATUS_REPO_LOCAL=5
+    typeset -gx -i _ZPLUG_STATUS_INVALID_ARGUMENT=6
+    typeset -gx -i _ZPLUG_STATUS_INVALID_OPTION=7
+    typeset -gx -i _ZPLUG_STATUS_ERROR_PARSE=8
+    typeset -gx -i _ZPLUG_STATUS_=255
 
     if (( $+ZPLUG_SHALLOW )); then
         __zplug::io::print::f \

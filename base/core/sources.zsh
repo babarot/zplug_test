@@ -15,7 +15,7 @@ __zplug::core::sources::is_handler_defined()
     handler_name="__zplug::sources::$source_name::$subcommand"
 
     if ! __zplug::core::sources::is_exists "$source_name"; then
-        return 1
+        return $_ZPLUG_STATUS_FALSE
     fi
 
     (( $+functions[$handler_name] ))
@@ -40,12 +40,12 @@ __zplug::core::sources::use_handler()
             # If it isn't found, search another handler
             # Nevertheless, callback is undefined
             (( $+functions[$handler_name] )) ||
-                return 1
+                return $_ZPLUG_STATUS_FAILURE
             ;;
         *)
             if ! __zplug::core::sources::is_handler_defined "$subcommand" "$source_name"; then
                 # Callback function is undefined
-                return 1
+                return $_ZPLUG_STATUS_FAILURE
             fi
             ;;
     esac

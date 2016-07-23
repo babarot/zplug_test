@@ -39,7 +39,8 @@ __zplug::sources::gh-r::update()
     tags[use]="$(__zplug::core::core::run_interfaces 'use' "$repo")"
     tags[at]="$(__zplug::core::core::run_interfaces 'at' "$repo")"
 
-    __zplug::utils::shell::cd "$tags[dir]" || return 1
+    __zplug::utils::shell::cd \
+        "$tags[dir]" || return $_ZPLUG_STATUS_REPO_NOT_FOUND
 
     url="$(
     __zplug::utils::releases::get_url \
@@ -59,20 +60,21 @@ __zplug::sources::gh-r::update()
             if [[ $tags[at] == "latest" ]]; then
                 if grep -q "$index" <<<"$url"; then
                     # up-to-date
-                    return 4
+                    return $_ZPLUG_STATUS_REPO_UP_TO_DATE
                 else
                     __zplug::sources::gh-r::clone "$repo"
                     return $status
                 fi
             else
                 # up-to-date
-                return 1
+                return $_ZPLUG_STATUS_REPO_UP_TO_DATE
             fi
         fi
     else
-        # Not found
-        return 2
+        return $_ZPLUG_STATUS_REPO_NOT_FOUND
     fi
+
+    return $_ZPLUG_STATUS_SUCCESS
 }
 
 __zplug::sources::gh-r::load_command()
