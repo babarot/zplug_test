@@ -43,19 +43,18 @@ __zplug::utils::git::clone()
             return 1
         fi
 
-        git clone \
+        GIT_TERMINAL_PROMPT=0 git clone \
             ${=depth_option} \
             --recursive \
             --quiet \
-            "$url_format" "$tags[dir]" &>/dev/null
-        ret=$status
+            "$url_format" "$tags[dir]" \
+            2>&1 | __zplug::io::report::save
     fi
 
     # The revison (hash/branch/tag) lock
     __zplug::utils::git::checkout "$repo"
-    ret=$status
 
-    return $ret
+    return $status
 }
 
 __zplug::utils::git::checkout()
@@ -88,7 +87,10 @@ __zplug::utils::git::checkout()
         return 1
     fi
 
-    git checkout -q "$tags[at]" &>/dev/null
+    git checkout -q "$tags[at]" \
+        2>&1 | __zplug::io::report::save
+    # Get pipestatus
+    __zplug::utils::shell::pipestatus
     if (( $status != 0 )); then
         __zplug::io::print::f \
             --die \
@@ -128,7 +130,7 @@ __zplug::utils::git::merge()
             git fetch
         fi
         git checkout -q "$git[branch]"
-    } &>/dev/null
+    } 2>&1 | __zplug::io::report::save
 
     git[local]="$(git rev-parse HEAD)"
     git[upstream]="$(git rev-parse "@{upstream}")"
@@ -137,17 +139,20 @@ __zplug::utils::git::merge()
     if [[ $git[local] == $git[upstream] ]]; then
         # up-to-date
         return $_ZPLUG_STATUS_REPO_UP_TO_DATE
+
     elif [[ $git[local] == $git[base] ]]; then
         # need to pull
         {
             git merge --ff-only "origin/$git[branch]"
             git submodule update --init --recursive
-        } &>/dev/null
-        # It can be expected to be successful
+        } 2>&1 | __zplug::io::report::save
+        __zplug::utils::shell::pipestatus
         return $status
+
     elif [[ $git[upstream] == $git[base] ]]; then
         # need to push
         return $_ZPLUG_STATUS_FAILURE
+
     else
         # Diverged
         return $_ZPLUG_STATUS_FAILURE
