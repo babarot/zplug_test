@@ -3,8 +3,14 @@ __zplug::io::report::write()
     cat <&0 >>|"$ZPLUG_ERROR_LOG"
 }
 
-__zplug::io::report::reporter()
+__zplug::io::report::with_json()
 {
+    # Variables for error report
+    # - $funcfiletrace[@]
+    # - $funcsourcetrace[@]
+    # - $funcstack[@]
+    # - $functrace[@]
+
     local -a header results
     local    w=""
     local -i i=0
@@ -24,6 +30,7 @@ __zplug::io::report::reporter()
 
     # Spit out to JSON
     printf '{'
+    printf '"pid": %d,' "$$"
     printf '"date": "%s",' "$(date +"%Y/%m/%d %T")"
     printf '"directory": "%s",' "$PWD"
     printf '"result": "%s",' "${results[*]}"
@@ -37,15 +44,10 @@ __zplug::io::report::reporter()
     done
     printf "\"%s\": \"%s\"" "$functrace[$#functrace]" "$funcstack[$#funcstack]"
     printf "}}\n"
-
-    # $funcfiletrace[@]
-    # $funcsourcetrace[@]
-    # $funcstack[@]
-    # $functrace[@]
 }
 
 __zplug::io::report::save()
 {
-    __zplug::io::report::reporter \
+    __zplug::io::report::with_json \
         | __zplug::io::report::write
 }
