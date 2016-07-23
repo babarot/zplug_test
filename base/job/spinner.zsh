@@ -18,7 +18,7 @@ __zplug::job::spinner::unlock()
 {
     __zplug::job::spinner::is_spin || return 1
 
-    rm -f "$spin_file" &>/dev/null
+    rm -f "$spin_file"
 }
 
 __zplug::job::spinner::spin()

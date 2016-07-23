@@ -17,6 +17,9 @@ __zplug::io::report::with_json()
 
     # Assume the stdin that should be discarded to /dev/null
     results=( ${(@f)"$(<&0)"} )
+    if (( $#results == 0 )); then
+        return 1
+    fi
 
     header=()
     header+=( "[$(date +"%Y/%m/%d %T")]" )

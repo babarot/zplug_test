@@ -43,12 +43,13 @@ __zplug::utils::git::clone()
             return 1
         fi
 
-        GIT_TERMINAL_PROMPT=0 git clone \
-            ${=depth_option} \
-            --recursive \
+        GIT_TERMINAL_PROMPT=0 \
+            git clone \
             --quiet \
+            --recursive \
+            ${=depth_option} \
             "$url_format" "$tags[dir]" \
-            2>&1 | __zplug::io::report::save
+            2> >(__zplug::io::report::save) >/dev/null
     fi
 
     # The revison (hash/branch/tag) lock
@@ -87,8 +88,7 @@ __zplug::utils::git::checkout()
         return 1
     fi
 
-    git checkout -q "$tags[at]" \
-        2>&1 | __zplug::io::report::save
+    git checkout -q "$tags[at]" &>/dev/null
     # Get pipestatus
     __zplug::utils::shell::pipestatus
     if (( $status != 0 )); then
@@ -130,7 +130,7 @@ __zplug::utils::git::merge()
             git fetch
         fi
         git checkout -q "$git[branch]"
-    } 2>&1 | __zplug::io::report::save
+    } &>/dev/null
 
     git[local]="$(git rev-parse HEAD)"
     git[upstream]="$(git rev-parse "@{upstream}")"
@@ -145,7 +145,7 @@ __zplug::utils::git::merge()
         {
             git merge --ff-only "origin/$git[branch]"
             git submodule update --init --recursive
-        } 2>&1 | __zplug::io::report::save
+        } &>/dev/null
         __zplug::utils::shell::pipestatus
         return $status
 
