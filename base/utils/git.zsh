@@ -166,7 +166,7 @@ __zplug::utils::git::status()
 {
     local    repo="${1:?}"
     local    key val line
-    local -A revisions
+    local -A tags revisions
 
     git ls-remote --heads --tags https://github.com/"$repo".git \
         | awk '{print $2,$1}' \
@@ -177,9 +177,15 @@ __zplug::utils::git::status()
             revisions[$key]="$val"
         done
 
+    tags[dir]="$(
+    __zplug::core::core::run_interfaces \
+        'dir' \
+        "$repo"
+    )"
+
     git \
-        --git-dir="$ZPLUG_REPOS/$repo/.git" \
-        --work-tree="$ZPLUG_REPOS/$repo" \
+        --git-dir="$tags[dir]/.git" \
+        --work-tree="$tags[dir]" \
         log \
         --oneline \
         --pretty="format:%H" \

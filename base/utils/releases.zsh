@@ -141,11 +141,16 @@ __zplug::utils::releases::get()
 {
     local    url="${1:?}"
     local    repo dir header artifact cmd
+    local -A tags
 
     # make 'username/reponame' style
     repo="${url:s-https://github.com/--:F[4]h}"
 
-    dir="$ZPLUG_REPOS/$repo"
+    tags[dir]="$(
+    __zplug::core::core::run_interfaces \
+        'dir' \
+        "$repo"
+    )"
     header="${url:h:t}"
     artifact="${url:t}"
 

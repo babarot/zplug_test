@@ -1,11 +1,11 @@
 __zplug::utils::omz::depends()
 {
-    local    lib_f func_name dep
-    local -a target
+    local       lib_f func_name dep
+    local -a    target
     local -a -U depends
-    local -a func_names
-    local -A omz_libs
-    local omz_repo="$ZPLUG_REPOS/$_ZPLUG_OHMYZSH"
+    local -a    func_names
+    local -A    omz_libs
+    local       omz_repo="$ZPLUG_REPOS/$_ZPLUG_OHMYZSH"
 
     for lib_f in "$omz_repo"/lib/*.zsh(.)
     do

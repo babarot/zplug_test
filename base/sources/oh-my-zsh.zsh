@@ -24,12 +24,18 @@ __zplug::sources::oh-my-zsh::install()
 __zplug::sources::oh-my-zsh::update()
 {
     local    repo="${1:?}"
-    local    top_dir="$ZPLUG_REPOS/$_ZPLUG_OHMYZSH"
-    local    rev_local rev_remote rev_base
     local -A tags
 
-    tags[dir]="$top_dir"
-    tags[at]="$(__zplug::core::core::run_interfaces 'at' "$repo")"
+    tags[dir]="${$(
+    __zplug::core::core::run_interfaces \
+        'dir' \
+        "$repo"
+    ):F[2]h}"
+    tags[at]="$(
+    __zplug::core::core::run_interfaces \
+        'at' \
+        "$repo"
+    )"
 
     __zplug::utils::git::merge \
         --dir    "$tags[dir]" \

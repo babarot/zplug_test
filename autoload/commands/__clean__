@@ -84,7 +84,7 @@ else
         if [[ -d $tags[dir] ]]; then
             case "$tags[from]" in
                 "oh-my-zsh")
-                    remove_repos+=( "$ZPLUG_REPOS/$_ZPLUG_OHMYZSH" )
+                    remove_repos+=( "${tags[dir]:F[2]h}" )
                     ;;
                 *)
                     remove_repos+=( "$tags[dir]" )
@@ -118,7 +118,11 @@ done
 # Remove packages from $zplugs
 for repo in "${(k)zplugs[@]}"
 do
-    tags[dir]="$(__zplug::core::core::run_interfaces 'dir' "$repo")"
+    tags[dir]="$(
+    __zplug::core::core::run_interfaces \
+        'dir' \
+        "$repo"
+    )"
     if [[ ! -d $tags[dir] ]]; then
         unset "zplugs[$repo]"
     fi

@@ -95,7 +95,7 @@ do
 
         # ON tag
         if [[ -n $tags[on] ]]; then
-            if [[ ! -d $ZPLUG_REPOS/${~tags[on]} ]]; then
+            if [[ ! -d $tags[dir]/${~tags[on]} ]]; then
                 $is_verbose && __zplug::io::print::die "$tags[name]: (not loaded)\n"
                 continue
             fi
@@ -155,13 +155,7 @@ do
     esac
 
     if [[ -n $tags[ignore] ]]; then
-        # Make ignore patterns
-        if [[ $tags[from] == "oh-my-zsh" ]]; then
-            ignore_patterns=( $(zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo $ZPLUG_REPOS/$_ZPLUG_OHMYZSH/${~tags[ignore]}" 2>/dev/null)(N) )
-        else
-            ignore_patterns=( $(zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo ${tags[dir]}/${~tags[ignore]}" 2>/dev/null)(N) )
-        fi
-
+        ignore_patterns=( $(zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo ${tags[dir]}/${~tags[ignore]}" 2>/dev/null)(N) )
         for ignore in "${ignore_patterns[@]}"
         do
             # Commands
