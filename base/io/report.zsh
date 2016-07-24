@@ -23,6 +23,7 @@ __zplug::io::report::with_json()
     # Spit out to JSON
     printf '{'
     printf '"pid": %d,' "$$"
+    printf '"level": %d,' "$SHLVL"
     printf '"date": "%s",' "$(date +"%Y/%m/%d %T")"
     printf '"directory": "%s",' "$PWD"
     printf '"result": "%s",' "${results[*]}"
