@@ -27,7 +27,7 @@ __zplug::job::queue::wait()
     if (( $#_zplug_job_queue % queue_max == 0 )); then
         wait "${_zplug_job_queue[@]}"
         __zplug::job::queue::clear
-    fi &>/dev/null
+    fi 2> >(__zplug::io::report::save) >/dev/null
 }
 
 __zplug::job::queue::wait_all()
@@ -36,7 +36,7 @@ __zplug::job::queue::wait_all()
 
     if (( $#_zplug_job_queue > 0 )); then
         wait "${_zplug_job_queue[@]}"
-    fi &>/dev/null
+    fi 2> >(__zplug::io::report::save) >/dev/null
 
     __zplug::job::queue::clear
 }

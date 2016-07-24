@@ -64,7 +64,9 @@ __zplug::core::sources::call()
             autoload -Uz "$val.zsh"
             eval "$val.zsh"
             unfunction "$val.zsh"
-        } &>/dev/null
+        } \
+            2> >(__zplug::io::report::save) >/dev/null
+
     fi
 }
 

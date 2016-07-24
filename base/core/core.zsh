@@ -78,7 +78,8 @@ __zplug::core::core::run_interfaces()
     ret=$status
 
     # TODO:
-    unfunction "$interface" &>/dev/null
+    unfunction "$interface" \
+        2> >(__zplug::io::report::save) >/dev/null
 
     return $ret
 }

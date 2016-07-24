@@ -88,7 +88,8 @@ __zplug::utils::git::checkout()
         return 1
     fi
 
-    git checkout -q "$tags[at]" &>/dev/null
+    git checkout -q "$tags[at]" \
+        2> >(__zplug::io::report::save) >/dev/null
     # Get pipestatus
     __zplug::utils::shell::pipestatus
     if (( $status != 0 )); then
@@ -130,7 +131,7 @@ __zplug::utils::git::merge()
             git fetch
         fi
         git checkout -q "$git[branch]"
-    } &>/dev/null
+    } 2> >(__zplug::io::report::save) >/dev/null
 
     git[local]="$(git rev-parse HEAD)"
     git[upstream]="$(git rev-parse "@{upstream}")"
@@ -145,7 +146,7 @@ __zplug::utils::git::merge()
         {
             git merge --ff-only "origin/$git[branch]"
             git submodule update --init --recursive
-        } &>/dev/null
+        } 2> >(__zplug::io::report::save) >/dev/null
         __zplug::utils::shell::pipestatus
         return $status
 
@@ -250,7 +251,10 @@ __zplug::utils::git::get_remote_state()
                 state="local out of date"
             else
                 origin_head="${$(git ls-remote origin HEAD)[1]}"
-                if ! git rev-parse -q "$origin_head" &>/dev/null; then
+
+                git rev-parse -q "$origin_head" \
+                    2> >(__zplug::io::report::save) >/dev/null
+                if (( $status != 0 )); then
                     state="local out of date"
                 elif (( $ahead > 0 )); then
                     state="fast-forwardable"

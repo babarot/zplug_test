@@ -17,7 +17,8 @@ __zplug::io::cache::load()
     $ZPLUG_USE_CACHE || return 2
 
     if [[ -f $ZPLUG_CACHE_FILE ]]; then
-        &>/dev/null diff -b \
+        2> >(__zplug::io::report::save) >/dev/null \
+            diff -b \
             <( \
             awk \
             -f "$_ZPLUG_AWKPATH/read_cache.awk" \

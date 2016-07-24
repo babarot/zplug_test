@@ -87,7 +87,7 @@ do
 
         # IF tag
         if [[ -n $tags[if] ]]; then
-            if ! eval "$tags[if]" &>/dev/null; then
+            if ! eval "$tags[if]" 2> >(__zplug::io::report::save) >/dev/null; then
                 $is_verbose && __zplug::io::print::die "$tags[name]: (not loaded)\n"
                 continue
             fi
