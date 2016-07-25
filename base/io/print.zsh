@@ -1,11 +1,11 @@
 __zplug::io::print::put()
 {
-    command printf -- "$@"
+    LC_ALL=POSIX command printf -- "$@"
 }
 
 __zplug::io::print::die()
 {
-    command printf -- "$@" >&2
+    LC_ALL=POSIX command printf -- "$@" >&2
 }
 
 __zplug::io::print::f()
