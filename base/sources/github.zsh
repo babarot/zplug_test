@@ -103,7 +103,10 @@ __zplug::sources::github::load_plugin()
             load_patterns+=( "$tags[dir]"/${~tags[use]}(N.) )
             if (( $#load_patterns == 0 )); then
                 # For brace
-                load_patterns+=( $(zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo $tags[dir]/$tags[use](N.)" 2>/dev/null) )
+                load_patterns+=( $(
+                zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo $tags[dir]/$tags[use](N.)" \
+                    2> >(__zplug::io::report::save)
+                ) )
             fi
             # Add the parent directory to fpath
             load_fpaths+=( $tags[dir]/_*(N.:h) )
@@ -115,7 +118,10 @@ __zplug::sources::github::load_plugin()
                 load_patterns+=( $tags[dir]/$tags[use]/$default_tags[use](N.) )
                 if (( $#load_patterns == 0 )); then
                     # For brace
-                    load_patterns+=( $(zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo $tags[dir]/$tags[use]/$default_tags[use](N.)" 2>/dev/null) )
+                    load_patterns+=( $(
+                    zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo $tags[dir]/$tags[use]/$default_tags[use](N.)" \
+                        2> >(__zplug::io::report::save)
+                    ) )
                 fi
                 # Add the parent directory to fpath
                 load_fpaths+=( $tags[dir]/$tags[use]/_*(N.:h) )
@@ -202,11 +208,12 @@ __zplug::sources::github::load_command()
         #   zplug "b4b4r07/sample", use:"bin/{mycmd1,sample}"
         # case 2:
         #   zplug "b4b4r07/sample", use:"bin/*"
-        sources=(
+        sources=( $(
         # expand to "$ZPLUG_REPOS/b4b4r07/sample/mycmd1"
         #           "$ZPLUG_REPOS/b4b4r07/sample/sample"
-        $(zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo ${tags[dir]}/${tags[use]}" 2>/dev/null)
-        )
+        zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo ${tags[dir]}/${tags[use]}" \
+            2> >(__zplug::io::report::save)
+        ) )
         for src in "${sources[@]}"
         do
             load_commands+=("$src\0$dst")

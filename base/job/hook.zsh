@@ -22,7 +22,7 @@ __zplug::job::hook::service()
         __zplug::utils::shell::cd "$tags[dir]"
         alias sudo=__zplug::utils::shell::sudo
 
-        eval "$tags[$hook]" 2>/dev/null
+        eval "$tags[$hook]" 2> >(__zplug::io::report::save)
         if (( $status != 0 )); then
             __zplug::io::print::f \
                 --die \

@@ -155,7 +155,10 @@ do
     esac
 
     if [[ -n $tags[ignore] ]]; then
-        ignore_patterns=( $(zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo ${tags[dir]}/${~tags[ignore]}" 2>/dev/null)(N) )
+        ignore_patterns=( $(
+        zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo ${tags[dir]}/${~tags[ignore]}" \
+            2> >(__zplug::io::report::save)
+        )(N) )
         for ignore in "${ignore_patterns[@]}"
         do
             # Commands
