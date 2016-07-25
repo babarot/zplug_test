@@ -90,8 +90,6 @@ __zplug::utils::git::checkout()
 
     git checkout -q "$tags[at]" \
         2> >(__zplug::io::report::save) >/dev/null
-    # Get pipestatus
-    __zplug::utils::shell::pipestatus
     if (( $status != 0 )); then
         __zplug::io::print::f \
             --die \
@@ -147,7 +145,6 @@ __zplug::utils::git::merge()
             git merge --ff-only "origin/$git[branch]"
             git submodule update --init --recursive
         } 2> >(__zplug::io::report::save) >/dev/null
-        __zplug::utils::shell::pipestatus
         return $status
 
     elif [[ $git[upstream] == $git[base] ]]; then
