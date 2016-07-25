@@ -149,8 +149,6 @@ zplug "zsh-users/zsh-syntax-highlighting", nice:10
 
 # ローカルプラグインを管理する
 zplug "~/.zsh", from:local
-# $ZPLUG_HOME からの相対パスで記述できる
-zplug "repos/robbyrussell/oh-my-zsh/custom/plugins/my-plugin", from:local
 
 # まだインストールされていないプラグインを一括インストールする
 if ! zplug check --verbose; then
