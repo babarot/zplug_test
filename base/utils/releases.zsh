@@ -163,7 +163,7 @@ __zplug::utils::releases::get()
     (
     __zplug::utils::shell::cd \
         --force \
-        "$dir"
+        "$tags[dir]"
 
     # Grab artifact from G-R
     eval "$cmd $url" \
@@ -173,7 +173,7 @@ __zplug::utils::releases::get()
         "$repo" \
         "$artifact" \
         2> >(__zplug::io::report::save) >/dev/null &&
-        echo "$header" >"$dir/INDEX"
+        echo "$header" >"$tags[dir]/INDEX"
     )
 
     return $status
