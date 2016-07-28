@@ -91,6 +91,7 @@ do
     #repo="$(__zplug::base::base::packaging "$repo")"
 
     if ! __zplug::base::base::zpluged "$repo"; then
+        __zplug::job::spinner::unlock
         __zplug::io::print::f \
             --die \
             --zplug \

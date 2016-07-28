@@ -21,6 +21,14 @@ __zplug::core::self::update()
 {
     local HEAD
 
+    if ! __zplug::base::base::zpluged "zplug/zplug"; then
+        __zplug::io::print::f \
+            --die \
+            --zplug \
+            "zplug/zplug: no package managed by zplug\n"
+        return 1
+    fi
+
     # If there is a difference in the remote and local
     # re-install zplug by itself and initialize
     if ! __zplug::core::self::info --up-to-date; then
