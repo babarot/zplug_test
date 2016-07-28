@@ -92,8 +92,38 @@ __zplug::core::core::reload()
         "commands" \
         "tags"
 
-    unfunction "$reply[@]"
-    autoload -Uz "$reply[@]"
+    unfunction "$reply[@]" &>/dev/null
+    autoload -Uz "$reply[@]" &>/dev/null
+
+    unset ZPLUG_HOME
+    unset ZPLUG_THREADS
+    unset ZPLUG_CLONE_DEPTH
+    unset ZPLUG_PROTOCOL
+    unset ZPLUG_FILTER
+    unset ZPLUG_LOADFILE
+    unset ZPLUG_USE_CACHE
+    unset ZPLUG_CACHE_FILE
+    unset ZPLUG_REPOS
+    unset ZPLUG_SUDO_PASSWORD
+    unset ZPLUG_ERROR_LOG
+
+    unset _ZPLUG_VERSION
+    unset _ZPLUG_URL
+    unset _ZPLUG_OHMYZSH
+    unset _ZPLUG_AWKPATH
+
+    unset _ZPLUG_STATUS_SUCCESS
+    unset _ZPLUG_STATUS_FAILURE
+    unset _ZPLUG_STATUS_TRUE
+    unset _ZPLUG_STATUS_FALSE
+    unset _ZPLUG_STATUS_REPO_NOT_FOUND
+    unset _ZPLUG_STATUS_REPO_FROZEN
+    unset _ZPLUG_STATUS_REPO_UP_TO_DATE
+    unset _ZPLUG_STATUS_REPO_LOCAL
+    unset _ZPLUG_STATUS_INVALID_ARGUMENT
+    unset _ZPLUG_STATUS_INVALID_OPTION
+    unset _ZPLUG_STATUS_ERROR_PARSE
+    unset _ZPLUG_STATUS_
 }
 
 __zplug::core::core::prepare()

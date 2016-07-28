@@ -1,5 +1,9 @@
 #!/bin/zsh
 
+export ZPLUG_HOME="/tmp/zplug-$RANDOM"
+export ZPLUG_REPOS="$ZPLUG_HOME/repos"
+mkdir -p "$ZPLUG_HOME" "$ZPLUG_REPOS"
+
 source "$ZPLUG_ROOT/init.zsh"
 
 zplugs=()
