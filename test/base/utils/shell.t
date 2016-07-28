@@ -19,3 +19,6 @@ T_SUB "__zplug::utils::shell::cd" ((
 T_SUB "__zplug::utils::shell::getopts" ((
   # skip
 ))
+T_SUB "__zplug::utils::shell::pipestatus" ((
+  # skip
+))
