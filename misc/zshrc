@@ -71,11 +71,6 @@ zplug clear
         as:command, \
         from:gh-r, \
         frozen:1
-    zplug "junegunn/fzf-bin", \
-        as:command, \
-        from:gh-r, \
-        rename-to:fzf, \
-        use:"*darwin*amd64*"
     # gist
     zplug "b4b4r07/79ee61f7c140c63d2786", \
         from:gist, \
@@ -92,7 +87,6 @@ zplug clear
     '(( $+aliases[cpv] ))'
     '(( $+functions[random_emoji] ))'
     '[[ -x $ZPLUG_HOME/bin/peco ]]'
-    '[[ -x $ZPLUG_HOME/bin/fzf ]]'
     '[[ -x $ZPLUG_HOME/bin/get_last_pane_path.sh ]]'
     )
 }
@@ -104,12 +98,12 @@ zplug clear
 
 # dir
 {
-    :
+    : 'SKIP' 'TODO'
 }
 
 # frozen
 {
-    :
+    : 'SKIP'
 }
 
 # hook-build
@@ -124,7 +118,14 @@ zplug clear
 
 # if
 {
-    :
+    zplug "tj/n", \
+        as:command, \
+        use:"bin/n", \
+        if:'(( $+commands[node] ))'
+
+    tests+=(
+    '[[ ! -x $ZPLUG_HOME/bin/n ]]'
+    )
 }
 
 # ignore
@@ -144,20 +145,32 @@ zplug clear
 
 # on
 {
-    :
-}
-
-# rename-to
-{
     zplug "stedolan/jq", \
         from:gh-r, \
         as:command, \
         rename-to:jq
+    zplug "b4b4r07/emoji-cli", \
+        on:"stedolan/jq"
 
     tests+=(
+    '(( $+functions[emoji::cli] ))'
     '[[ -x $ZPLUG_HOME/bin/jq ]]'
     )
 }
+
+# rename-to
+{
+    zplug "junegunn/fzf-bin", \
+        as:command, \
+        from:gh-r, \
+        rename-to:fzf, \
+        use:"*darwin*amd64*"
+
+    tests+=(
+    '[[ -x $ZPLUG_HOME/bin/fzf ]]'
+    )
+}
+
 
 # use
 {

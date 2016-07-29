@@ -1,6 +1,6 @@
 ZPLUG_ROOT  := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 SHOVE_URL   := https://github.com/key-amb/shove
-SHOVE_DIR   := $(ZPLUG_ROOT)/.ignore/shove
+SHOVE_DIR   := $(ZPLUG_ROOT)/.gitignore.d/shove
 TEST_TARGET ?= test
 
 .DEFAULT_GOAL := help

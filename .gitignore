@@ -3,7 +3,7 @@ bin/*
 !bin/zplug-env
 repos/*
 .cache
-.ignore/*
+.gitignore.d/*
 
 # zsh
 zcompdump
