@@ -28,6 +28,10 @@ zplug clear
     # oh-my-zsh
     zplug "plugins/git", \
         from:oh-my-zsh
+    zplug "plugins/cp", \
+        from:oh-my-zsh
+    zplug "plugins/emoji", \
+        from:oh-my-zsh
     # gh-r
     zplug "peco/peco", \
         as:command, \
@@ -39,7 +43,7 @@ zplug clear
         as:command, \
         use:get_last_pane_path.sh
     # local
-    # skip
+    ## skip
 }
 
 # at
