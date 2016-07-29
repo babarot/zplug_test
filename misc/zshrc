@@ -5,10 +5,32 @@ export ZPLUG_HOME="/tmp/zplug-$RANDOM"
 export ZPLUG_REPOS="$ZPLUG_HOME/repos"
 mkdir -p "$ZPLUG_HOME" "$ZPLUG_REPOS"
 
+# Prepare
 source "$ZPLUG_ROOT/init.zsh"
-
 zplugs=()
 zplug clear
+
+# as
+{
+    # plugin
+    zplug "tcnksm/docker-alias", \
+        use:zshrc
+    # command
+    zplug "Jxck/dotfiles", \
+        as:command, \
+        use:"bin/{histuniq,color}"
+}
+
+# at
+{
+    # branch
+    zplug "b4b4r07/enhancd", \
+        at:v1, \
+        use:"*.sh"
+    # commit
+    zplug "mollifier/anyframe", \
+        at:4c23cb60
+}
 
 # from
 {
@@ -37,6 +59,11 @@ zplug clear
         as:command, \
         from:gh-r, \
         frozen:1
+    zplug "junegunn/fzf-bin", \
+        as:command, \
+        from:gh-r, \
+        rename-to:fzf, \
+        use:"*darwin*amd64*"
     # gist
     zplug "b4b4r07/79ee61f7c140c63d2786", \
         from:gist, \
@@ -46,12 +73,16 @@ zplug clear
     ## skip
 }
 
-# at
-{
-    zplug "b4b4r07/enhancd", \
-        at:v1, \
-        use:"*.sh"
-}
+# depth
+# dir
+# frozen
+# hook-build
+# hook-load
+# if
+# ignore
+# lazy
+# nice
+# on
 
 # rename-to
 {
@@ -61,10 +92,7 @@ zplug clear
         rename-to:jq
 }
 
-# brace
-zplug "Jxck/dotfiles", \
-    as:command, \
-    use:"bin/{histuniq,color}"
+# use
 
-zplug install || exit 1
+zplug install        || exit 1
 zplug load --verbose || exit 1
