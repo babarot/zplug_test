@@ -174,7 +174,7 @@ done
             __zplug::io::print::die \
                 "$fg_bold[red] ==> Installation failed for following packages:$reset_color\n"
             __zplug::io::print::die \
-                "- %s\n" "${failed_packages[@]}"
+                "- $fg_bold[red]%s$reset_color\n" "${failed_packages[@]}"
         fi
 
         finish_time=$SECONDS
