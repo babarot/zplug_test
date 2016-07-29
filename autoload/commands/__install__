@@ -161,11 +161,9 @@ done
     # Skip footer prints
     if (( $#checked_packages == 0 )); then
         __zplug::io::print::f \
-            --die \
             --zplug \
-            --func \
             "No package to install\n"
-        return 1
+        return 0
     else
         if (( $#failed_packages == 0 )); then
             __zplug::io::print::put \

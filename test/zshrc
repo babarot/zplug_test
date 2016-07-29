@@ -1,5 +1,6 @@
 #!/bin/zsh
 
+# Prepare
 export ZPLUG_HOME="/tmp/zplug-$RANDOM"
 export ZPLUG_REPOS="$ZPLUG_HOME/repos"
 mkdir -p "$ZPLUG_HOME" "$ZPLUG_REPOS"
@@ -9,35 +10,57 @@ source "$ZPLUG_ROOT/init.zsh"
 zplugs=()
 zplug clear
 
-zplug "plugins/git", \
-    from:oh-my-zsh
-zplug "b4b4r07/enhancd", \
-    at:v1, \
-    use:"*.sh"
-zplug "b4b4r07/79ee61f7c140c63d2786", \
-    from:gist, \
-    as:command, \
-    use:get_last_pane_path.sh
-zplug "b4b4r07/hello_bitbucket", \
-    from:bitbucket, \
-    as:command, \
-    hook-build:"chmod 755 *.sh", \
-    use:"*.sh"
-zplug "mrowa44/emojify", \
-    as:command
-zplug "peco/peco", \
-    as:command, \
-    from:gh-r, \
-    frozen:1
-zplug "stedolan/jq", \
-    from:gh-r, \
-    as:command, \
-    rename-to:jq
-zplug "b4b4r07/emoji-cli", \
-    on:"stedolan/jq"
+# from
+{
+    # github
+    zplug "zsh-users/zsh-syntax-highlighting", \
+        from:github, \
+        as:plugin
+    zplug "mrowa44/emojify", \
+        from:github, \
+        as:command
+    # bitbucket
+    zplug "b4b4r07/hello_bitbucket", \
+        from:bitbucket, \
+        as:command, \
+        hook-build:"chmod 755 *.sh", \
+        use:"*.sh"
+    # oh-my-zsh
+    zplug "plugins/git", \
+        from:oh-my-zsh
+    # gh-r
+    zplug "peco/peco", \
+        as:command, \
+        from:gh-r, \
+        frozen:1
+    # gist
+    zplug "b4b4r07/79ee61f7c140c63d2786", \
+        from:gist, \
+        as:command, \
+        use:get_last_pane_path.sh
+    # local
+    # skip
+}
+
+# at
+{
+    zplug "b4b4r07/enhancd", \
+        at:v1, \
+        use:"*.sh"
+}
+
+# rename-to
+{
+    zplug "stedolan/jq", \
+        from:gh-r, \
+        as:command, \
+        rename-to:jq
+}
+
+# brace
 zplug "Jxck/dotfiles", \
     as:command, \
     use:"bin/{histuniq,color}"
 
-zplug install
-zplug load --verbose
+zplug install || exit 1
+zplug load --verbose || exit 1
