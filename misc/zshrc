@@ -1,6 +1,7 @@
 #!/bin/zsh
 
 # Prepare
+tests=()
 export ZPLUG_HOME="/tmp/zplug-$RANDOM"
 export ZPLUG_REPOS="$ZPLUG_HOME/repos"
 mkdir -p "$ZPLUG_HOME" "$ZPLUG_REPOS"
@@ -19,6 +20,12 @@ zplug clear
     zplug "Jxck/dotfiles", \
         as:command, \
         use:"bin/{histuniq,color}"
+
+    tests+=(
+    '(( $+aliases[dl] ))'
+    '[[ -x $ZPLUG_HOME/bin/histuniq ]]'
+    '[[ -x $ZPLUG_HOME/bin/color ]]'
+    )
 }
 
 # at
@@ -30,6 +37,11 @@ zplug clear
     # commit
     zplug "mollifier/anyframe", \
         at:4c23cb60
+
+    tests+=(
+    '(( $+functions[enhancd_cd] ))'
+    '(( $+functions[anyframe-init] ))'
+    )
 }
 
 # from
@@ -71,6 +83,18 @@ zplug clear
         use:get_last_pane_path.sh
     # local
     ## skip
+
+    tests+=(
+    '(( $+functions[_zsh_highlight] ))'
+    '[[ -x $ZPLUG_HOME/bin/emojify ]]'
+    '[[ -x $ZPLUG_HOME/bin/hello.sh ]]'
+    '(( $+aliases[gba] ))'
+    '(( $+aliases[cpv] ))'
+    '(( $+functions[random_emoji] ))'
+    '[[ -x $ZPLUG_HOME/bin/peco ]]'
+    '[[ -x $ZPLUG_HOME/bin/fzf ]]'
+    '[[ -x $ZPLUG_HOME/bin/get_last_pane_path.sh ]]'
+    )
 }
 
 # depth
@@ -90,9 +114,25 @@ zplug clear
         from:gh-r, \
         as:command, \
         rename-to:jq
+
+    tests+=(
+    '[[ -x $ZPLUG_HOME/bin/jq ]]'
+    )
 }
 
 # use
 
 zplug install        || exit 1
 zplug load --verbose || exit 1
+
+ret=0
+for test in "$tests[@]"
+do
+    eval "$test"
+    if (( $status != 0 )); then
+        echo "FAIL: $test" >&2
+        ret=1
+    fi
+done
+
+exit $ret
