@@ -98,15 +98,54 @@ zplug clear
 }
 
 # depth
+{
+    :
+}
+
 # dir
+{
+    :
+}
+
 # frozen
+{
+    :
+}
+
 # hook-build
+{
+    :
+}
+
 # hook-load
+{
+    :
+}
+
 # if
+{
+    :
+}
+
 # ignore
+{
+    :
+}
+
 # lazy
+{
+    :
+}
+
 # nice
+{
+    :
+}
+
 # on
+{
+    :
+}
 
 # rename-to
 {
@@ -121,6 +160,9 @@ zplug clear
 }
 
 # use
+{
+    :
+}
 
 zplug install        || exit 1
 zplug load --verbose || exit 1
@@ -130,7 +172,7 @@ for test in "$tests[@]"
 do
     eval "$test"
     if (( $status != 0 )); then
-        echo "FAIL: $test" >&2
+        printf "$fg[red]FAIL: $test$reset_color\n" >&2
         ret=1
     fi
 done
