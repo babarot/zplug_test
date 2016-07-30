@@ -135,9 +135,12 @@ do
                     "$repo"
                 reply_hash=( "$reply[@]" )
 
+                # DEBUG
+                set -x
                 load_fpaths+=( ${(@f)reply_hash[load_fpaths]} )
                 load_plugins+=( ${(@f)reply_hash[load_plugins]} )
                 nice_plugins+=( ${(@f)reply_hash[nice_plugins]} )
+                set +x
             fi
             ;;
 
@@ -215,7 +218,6 @@ done
     # Normal plugins
     for pkg in "${(u)load_plugins[@]}"
     do
-        echo "$pkg" # DEBUG
         if [[ -f $pkg ]]; then
             source "$pkg"
             if (( $status == 0 )); then
