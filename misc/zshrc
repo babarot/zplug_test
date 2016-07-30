@@ -124,7 +124,7 @@ zplug clear
         if:'(( $+commands[node] ))'
 
     tests+=(
-    '[[ ! -x $ZPLUG_HOME/bin/n ]]'
+    '[[ -x $ZPLUG_HOME/bin/n ]]'
     )
 }
 
