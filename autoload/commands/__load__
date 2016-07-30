@@ -7,7 +7,7 @@ local -a repos
 local    repo
 local -A tags
 
-local    arg pkg
+local    arg pkg dep
 local    ignore
 local -A load_commands
 local -a unsorted_repos
@@ -95,7 +95,12 @@ do
 
         # ON tag
         if [[ -n $tags[on] ]]; then
-            if [[ ! -d $tags[dir]/${~tags[on]} ]]; then
+            dep="$(
+            __zplug::core::core::run_interfaces \
+                'dir' \
+                ${~tags[on]}
+            )"
+            if [[ ! -d $dep ]]; then
                 $is_verbose && __zplug::io::print::die "$tags[name]: (not loaded)\n"
                 continue
             fi
