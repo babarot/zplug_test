@@ -210,6 +210,8 @@ done
     )
 }
 
+echo "$load_plugins[@]"
+
 # Plugins
 {
     # Normal plugins
