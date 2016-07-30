@@ -95,12 +95,10 @@ do
 
         # ON tag
         if [[ -n $tags[on] ]]; then
-            dep="$(
             __zplug::core::core::run_interfaces \
-                'dir' \
+                'check' \
                 ${~tags[on]}
-            )"
-            if [[ ! -d $dep ]]; then
+            if (( $status != 0 )); then
                 $is_verbose && __zplug::io::print::die "$tags[name]: (not loaded)\n"
                 continue
             fi
