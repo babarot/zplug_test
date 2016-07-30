@@ -12,8 +12,8 @@ local    ignore
 local -A load_commands
 local -a unsorted_repos
 
-local -a load_plugins load_fpaths lazy_plugins nice_plugins
-local -a ignore_patterns
+local -aU load_plugins load_fpaths lazy_plugins nice_plugins
+local -aU ignore_patterns
 
 local -A reply_hash
 local -A hook_load
@@ -127,7 +127,6 @@ do
             ;;
 
         "plugin")
-            load_fpaths=() load_plugins=() nice_plugins=()
             if __zplug::core::sources::is_handler_defined "load_plugin" "$tags[from]"; then
                 # Custom handler for loading
                 __zplug::core::sources::use_handler \
