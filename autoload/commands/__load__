@@ -127,6 +127,7 @@ do
             ;;
 
         "plugin")
+            load_fpaths=() load_plugins=() nice_plugins=()
             if __zplug::core::sources::is_handler_defined "load_plugin" "$tags[from]"; then
                 # Custom handler for loading
                 __zplug::core::sources::use_handler \
@@ -135,12 +136,9 @@ do
                     "$repo"
                 reply_hash=( "$reply[@]" )
 
-                # DEBUG
-                set -x
                 load_fpaths+=( ${(@f)reply_hash[load_fpaths]} )
                 load_plugins+=( ${(@f)reply_hash[load_plugins]} )
                 nice_plugins+=( ${(@f)reply_hash[nice_plugins]} )
-                set +x
             fi
             ;;
 
