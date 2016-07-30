@@ -210,13 +210,12 @@ done
     )
 }
 
-echo "$load_plugins[@]"
-
 # Plugins
 {
     # Normal plugins
     for pkg in "${(u)load_plugins[@]}"
     do
+        echo "$pkg" # DEBUG
         if [[ -f $pkg ]]; then
             source "$pkg"
             if (( $status == 0 )); then
@@ -243,7 +242,7 @@ echo "$load_plugins[@]"
     } &!
 
     # Nice plugins
-    for pkg in "${nice_plugins[@]}"
+    for pkg in "${(u)nice_plugins[@]}"
     do
         if [[ -f $pkg ]]; then
             source "$pkg"
@@ -261,7 +260,7 @@ echo "$load_plugins[@]"
     done
 
     # Lazy plugins
-    for pkg in "${lazy_plugins[@]}"
+    for pkg in "${(u)lazy_plugins[@]}"
     do
         autoload -Uz "${pkg:t}"
     done
