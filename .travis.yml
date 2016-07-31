@@ -12,4 +12,4 @@ sudo: required
 before_script:
     - zsh --version
 script:
-    - make test
+    - TEST_TARGET=test/all.t make test

@@ -145,21 +145,15 @@ zplug clear
 
 # on
 {
-    zplug "stedolan/jq", \
-        from:gh-r, \
-        as:command, \
-        rename-to:jq
-    zplug "b4b4r07/emoji-cli", \
-        on:"stedolan/jq"
-
-    tests+=(
-    '(( $+functions[emoji::cli] ))'
-    '[[ -x $ZPLUG_HOME/bin/jq ]]'
-    )
+    :
 }
 
 # rename-to
 {
+    zplug "stedolan/jq", \
+        from:gh-r, \
+        as:command, \
+        rename-to:jq
     zplug "junegunn/fzf-bin", \
         as:command, \
         from:gh-r, \
@@ -167,6 +161,7 @@ zplug clear
         use:"*darwin*amd64*"
 
     tests+=(
+    '[[ -x $ZPLUG_HOME/bin/jq ]]'
     '[[ -x $ZPLUG_HOME/bin/fzf ]]'
     )
 }
