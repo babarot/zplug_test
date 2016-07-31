@@ -67,10 +67,11 @@ zplug clear
     zplug "plugins/emoji", \
         from:oh-my-zsh
     # gh-r
-    zplug "peco/peco", \
+    zplug "junegunn/fzf-bin", \
         as:command, \
         from:gh-r, \
-        frozen:1
+        rename-to:fzf, \
+        use:"*darwin*amd64*"
     # gist
     zplug "b4b4r07/79ee61f7c140c63d2786", \
         from:gist, \
@@ -86,7 +87,7 @@ zplug clear
     '(( $+aliases[gba] ))'
     '(( $+aliases[cpv] ))'
     '(( $+functions[random_emoji] ))'
-    '[[ -x $ZPLUG_HOME/bin/peco ]]'
+    '[[ -x $ZPLUG_HOME/bin/fzf ]]'
     '[[ -x $ZPLUG_HOME/bin/get_last_pane_path.sh ]]'
     )
 }
@@ -145,19 +146,13 @@ zplug clear
 
 # on
 {
-    zplug "junegunn/fzf-bin", \
-        as:command, \
-        from:gh-r, \
-        rename-to:fzf, \
-        use:"*darwin*amd64*"
     zplug "b4b4r07/zsh-gomi", \
         as:command, \
         use:"bin/gomi", \
-        on:"junegunn/fzf-bin"
+        on:"peco/peco"
 
     tests+=(
-    '[[ -x $ZPLUG_HOME/bin/gomi ]]'
-    '[[ -x $ZPLUG_HOME/bin/fzf ]]'
+    '[[ ! -x $ZPLUG_HOME/bin/gomi ]]'
     )
 }
 

@@ -42,9 +42,22 @@ fi
 
 for repo in "${repos[@]}"
 do
-    tags[from]="$(__zplug::core::core::run_interfaces 'from' "$repo")"
-    if __zplug::core::sources::is_handler_defined check "$tags[from]"; then
-        __zplug::core::sources::use_handler check "$tags[from]" "$repo"
+    tags[from]="$(
+    __zplug::core::core::run_interfaces \
+        'from' \
+        "$repo" \
+        2> >(__zplug::io::report::save)
+    )"
+    if [[ -z "$tags[from]" ]]; then
+        not_installed_repos+=( "$repo" )
+        continue
+    fi
+
+    if __zplug::core::sources::is_handler_defined "check" "$tags[from]"; then
+        __zplug::core::sources::use_handler \
+            "check" \
+            "$tags[from]" \
+            "$repo"
 
         if (( $status != 0 )); then
             not_installed_repos+=( "$repo" )
