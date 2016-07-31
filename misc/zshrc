@@ -145,7 +145,20 @@ zplug clear
 
 # on
 {
-    :
+    zplug "junegunn/fzf-bin", \
+        as:command, \
+        from:gh-r, \
+        rename-to:fzf, \
+        use:"*darwin*amd64*"
+    zplug "b4b4r07/zsh-gomi", \
+        as:command, \
+        use:"bin/gomi", \
+        on:"junegunn/fzf-bin"
+
+    tests+=(
+    '[[ -x $ZPLUG_HOME/bin/gomi ]]'
+    '[[ -x $ZPLUG_HOME/bin/fzf ]]'
+    )
 }
 
 # rename-to
@@ -154,18 +167,11 @@ zplug clear
         from:gh-r, \
         as:command, \
         rename-to:jq
-    zplug "junegunn/fzf-bin", \
-        as:command, \
-        from:gh-r, \
-        rename-to:fzf, \
-        use:"*darwin*amd64*"
 
     tests+=(
     '[[ -x $ZPLUG_HOME/bin/jq ]]'
-    '[[ -x $ZPLUG_HOME/bin/fzf ]]'
     )
 }
-
 
 # use
 {
