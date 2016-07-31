@@ -1,6 +1,3 @@
-# cache
-typeset -gx _zplug_awk_path
-
 __zplug::utils::awk::path()
 {
     local    awk_path
