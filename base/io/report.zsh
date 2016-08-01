@@ -26,7 +26,7 @@ __zplug::io::report::with_json()
     printf '"level": %d,' "$SHLVL"
     printf '"date": "%s",' "$(date +"%Y/%m/%d %T")"
     printf '"directory": "%s",' "$PWD"
-    printf '"result": "%s",' "${results[*]}"
+    printf '"result": %s,' "${(qqq)results[*]}"
     printf '"trace": {'
     for ((i = 1; i < $#functrace; i++))
     do

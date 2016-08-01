@@ -11,4 +11,6 @@ if [[ ! -f $ZPLUG_ERROR_LOG ]] || [[ ! -s $ZPLUG_ERROR_LOG ]]; then
     return 1
 fi
 
-cat "$ZPLUG_ERROR_LOG" | ${=PAGER:-less}
+cat "$ZPLUG_ERROR_LOG" \
+    | sed -e 's/[[:cntrl:]]//g' \
+    | ${=PAGER:-less}
