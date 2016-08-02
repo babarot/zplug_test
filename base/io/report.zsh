@@ -13,6 +13,7 @@ __zplug::io::report::with_json()
 
     local -i i
     local -a message
+    local    date
 
     # Assume the stdin that should be discarded to /dev/null
     message=( ${(@f)"$(<&0)"} )
@@ -20,11 +21,14 @@ __zplug::io::report::with_json()
         return 1
     fi
 
+    # https://tools.ietf.org/html/rfc3339#section-5.6
+    date="$(date +%FT%T%z | sed -E 's/(.*)([0-9][0-9])([0-9][0-9])/\1\2:\3/')"
+
     # Spit out to JSON
     printf '{'
     printf '"pid": %d,' "$$"
     printf '"level": %d,' "$SHLVL"
-    printf '"date": "%s",' "$(date +%FT%T%z)"
+    printf '"date": "%s",' "$date"
     printf '"dir": "%s",' "$PWD"
     printf '"message": %s,' "${(qqq)message[*]}"
     printf '"trace": {'
@@ -39,7 +43,8 @@ __zplug::io::report::with_json()
     printf '"%s": "%s"' \
         "$functrace[$#functrace]" \
         "$funcstack[$#funcstack]"
-    printf "}}\n"
+    printf "}"
+    printf "}\n"
 }
 
 __zplug::io::report::save()
