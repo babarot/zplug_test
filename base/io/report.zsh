@@ -12,11 +12,11 @@ __zplug::io::report::with_json()
     # - $functrace[@]
 
     local -i i
-    local -a results
+    local -a message
 
     # Assume the stdin that should be discarded to /dev/null
-    results=( ${(@f)"$(<&0)"} )
-    if (( $#results == 0 )); then
+    message=( ${(@f)"$(<&0)"} )
+    if (( $#message == 0 )); then
         return 1
     fi
 
@@ -25,8 +25,8 @@ __zplug::io::report::with_json()
     printf '"pid": %d,' "$$"
     printf '"level": %d,' "$SHLVL"
     printf '"date": "%s",' "$(date +"%Y/%m/%d %T")"
-    printf '"directory": "%s",' "$PWD"
-    printf '"result": %s,' "${(qqq)results[*]}"
+    printf '"workd": "%s",' "$PWD"
+    printf '"message": %s,' "${(qqq)message[*]}"
     printf '"trace": {'
     for ((i = 1; i < $#functrace; i++))
     do
