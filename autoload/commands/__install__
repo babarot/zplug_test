@@ -56,7 +56,7 @@ done
 # Main loop
 for repo in "${repos[@]}"
 do
-    __zplug::core::tags::parse "$repo" || return 1
+    __zplug::core::tags::parse "$repo"
     tags=( "${reply[@]}" )
 
     # Skip items

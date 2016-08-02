@@ -17,7 +17,7 @@ __zplug::utils::git::clone()
         return 1
     fi
 
-    __zplug::core::tags::parse "$repo" || return 1
+    __zplug::core::tags::parse "$repo"
     tags=( "${reply[@]}" )
 
     if [[ $tags[depth] == 0 ]]; then

@@ -3,7 +3,7 @@ __zplug::job::hook::service()
     local    repo="${1:?}" hook="${2:?}"
     local -A tags
 
-    __zplug::core::tags::parse "$repo" || return 1
+    __zplug::core::tags::parse "$repo"
     tags=( "${reply[@]}" )
 
     # There is no $hook file in /autoload/tags directory

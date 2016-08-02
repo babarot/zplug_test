@@ -109,7 +109,7 @@ do
         local -i ret=1
         local -A tags
 
-        __zplug::core::tags::parse "$repo" || return 1
+        __zplug::core::tags::parse "$repo"
         tags=( "${reply[@]}" )
 
         # Run in anonymous function for using its exit code
