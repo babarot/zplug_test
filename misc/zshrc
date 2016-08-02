@@ -159,7 +159,7 @@ zplug clear
         nice:19
 
     tests+=(
-    '(( ! $+functions[_zsh_highlight] ))'
+    '(( $+functions[_zsh_highlight] ))'
     )
 }
 
