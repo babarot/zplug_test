@@ -1,29 +1,3 @@
-# https://tools.ietf.org/html/rfc5424
-#
-# Numerical         Severity
-#    Code
-#
-#      0       Emergency: system is unusable
-#      1       Alert: action must be taken immediately
-#      2       Critical: critical conditions
-#      3       Error: error conditions
-#      4       Warning: warning conditions
-#      5       Notice: normal but significant condition
-#      6       Informational: informational messages
-#      7       Debug: debug-level messages
-
-typeset -gx -A _zplug_log_level
-_zplug_log_level=(
-''      '0:Emergency:system is unusable'
-''      '1:Alert:action must be taken immediately'
-''      '2:Critical:critical conditions'
-'ERROR' '3:Error:error conditions'
-'WARN'  '4:Warning:warning conditions'
-''      '5:Notice:normal but significant condition'
-'INFO'  '6:Informational:informational messages'
-''      '7:Debug:debug-level messages'
-)
-
 __zplug::io::log::with_json()
 {
     # Variables for error report
@@ -34,7 +8,7 @@ __zplug::io::log::with_json()
 
     local -i i
     local -a message
-    local    date
+    local    date level="$1"
 
     # Assume the stdin that should be discarded to /dev/null
     message=( ${(@f)"$(<&0)"} )
@@ -49,6 +23,7 @@ __zplug::io::log::with_json()
     printf '{'
     printf '"pid": %d,' "$$"
     printf '"shlvl": %d,' "$SHLVL"
+    printf '"level": "%s",' "$level"
     printf '"date": "%s",' "$date"
     printf '"dir": "%s",' "$PWD"
     printf '"message": %s,' "${(qqq)message[*]}"
@@ -68,13 +43,61 @@ __zplug::io::log::with_json()
     printf "}\n"
 }
 
-__zplug::io::log::report()
+__zplug::io::log::level()
 {
-    :
+    # https://tools.ietf.org/html/rfc5424
+    #
+    # Numerical         Severity
+    #    Code
+    #
+    #      0       Emergency: system is unusable
+    #      1       Alert: action must be taken immediately
+    #      2       Critical: critical conditions
+    #      3       Error: error conditions
+    #      4       Warning: warning conditions
+    #      5       Notice: normal but significant condition
+    #      6       Informational: informational messages
+    #      7       Debug: debug-level messages
+
+    local    level="${(U)1:-"INFO"}" log_level
+    local -i part="${2:-2}"
+    local -A syslog_code
+
+    syslog_code=(
+    ''      '0:Emergency:system is unusable'
+    ''      '1:Alert:action must be taken immediately'
+    ''      '2:Critical:critical conditions'
+    'ERROR' '3:Error:error conditions'
+    'WARN'  '4:Warning:warning conditions'
+    ''      '5:Notice:normal but significant condition'
+    'INFO'  '6:Informational:informational messages'
+    ''      '7:Debug:debug-level messages'
+    )
+
+    if (( ! $+syslog_code[$level] )); then
+        level="INFO"
+    fi
+
+    if (( $part > 3 )); then
+        part=0
+    fi
+
+    echo "$syslog_code[$level]" \
+        | awk -F: '{print $'"$part"'}' \
+        | read log_level
+
+    echo "${(U)log_level}"
 }
 
 __zplug::io::log::save()
 {
-    __zplug::io::log::with_json \
+    local level
+
+    # Spit out the log as "ERROR" by default
+    __zplug::io::log::level \
+        "${1:-"ERROR"}" \
+        | read level
+
+    __zplug::io::log::with_json "$level" \
         | >>|"$ZPLUG_ERROR_LOG"
 }
