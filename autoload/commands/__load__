@@ -60,6 +60,15 @@ repos=(
 # Order by nice value
 for repo in "${repos[@]}"
 do
+    if ! __zplug::base::base::zpluged "$repo"; then
+        __zplug::io::print::f \
+            --die \
+            --zplug \
+            --func \
+            "$repo: no such package\n"
+        return 1
+    fi
+
     tags[nice]="$(__zplug::core::core::run_interfaces 'nice' "$repo")"
     unsorted_repos+=( "$tags[nice]:$repo" )
 done

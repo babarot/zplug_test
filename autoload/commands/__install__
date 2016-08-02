@@ -56,6 +56,15 @@ done
 # Main loop
 for repo in "${repos[@]}"
 do
+    if ! __zplug::base::base::zpluged "$repo"; then
+        __zplug::io::print::f \
+            --die \
+            --zplug \
+            --func \
+            "$repo: no such package\n"
+        return 1
+    fi
+
     __zplug::core::tags::parse "$repo"
     tags=( "${reply[@]}" )
 

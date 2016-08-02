@@ -52,7 +52,8 @@ do
         __zplug::io::print::f \
             --die \
             --zplug \
-            "'$repo' is not a managed package\n"
+            --func \
+            "$repo: no such package\n"
         return 1
     fi
 

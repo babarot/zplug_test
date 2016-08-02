@@ -88,14 +88,11 @@ __zplug::job::spinner::spin &
 
 for repo in "${repos[@]}"
 do
-    #repo="$(__zplug::base::base::packaging "$repo")"
-
     if ! __zplug::base::base::zpluged "$repo"; then
         __zplug::job::spinner::unlock
         __zplug::io::print::f \
             --die \
             --zplug \
-            --error \
             --func \
             "$repo: no such package\n"
         return 1
