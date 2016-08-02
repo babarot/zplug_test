@@ -47,7 +47,7 @@ zplug clear
 # from
 {
     # github
-    zplug "zsh-users/zsh-syntax-highlighting", \
+    zplug "zsh-users/zsh-history-substring-search", \
         from:github, \
         as:plugin
     zplug "mrowa44/emojify", \
@@ -81,7 +81,7 @@ zplug clear
     ## skip
 
     tests+=(
-    '(( $+functions[_zsh_highlight] ))'
+    '(( $+functions[_zsh_highlight_bind_widgets] ))'
     '[[ -x $ZPLUG_HOME/bin/emojify ]]'
     '[[ -x $ZPLUG_HOME/bin/hello.sh ]]'
     '(( $+aliases[gba] ))'
@@ -109,7 +109,16 @@ zplug clear
 
 # hook-build
 {
-    :
+    # Duplicates
+    zplug "b4b4r07/hello_bitbucket", \
+        from:bitbucket, \
+        as:command, \
+        hook-build:"chmod 755 *.sh", \
+        use:"*.sh"
+
+    tests+=(
+    '[[ -x $ZPLUG_HOME/bin/hello.sh ]]'
+    )
 }
 
 # hook-load
@@ -131,7 +140,12 @@ zplug clear
 
 # ignore
 {
-    :
+    zplug "zsh-users/zaw", \
+        ignore:"zaw-launcher.zsh"
+
+    tests+=(
+    '(( ! $+functions[zle-line-init] ))'
+    )
 }
 
 # lazy
@@ -141,7 +155,12 @@ zplug clear
 
 # nice
 {
-    :
+    zplug "zsh-users/zsh-syntax-highlighting", \
+        nice:19
+
+    tests+=(
+    '(( ! $+functions[_zsh_highlight] ))'
+    )
 }
 
 # on
@@ -170,7 +189,14 @@ zplug clear
 
 # use
 {
-    :
+    zplug "b4b4r07/http_code", \
+        as:command, \
+        use:"bin"
+    zplug "monochromegane/the_platinum_searcher", \
+        as:command, \
+        from:gh-r, \
+        rename-to:pt, \
+        use:"*${(L)$(uname -s)}*amd64*"
 }
 
 zplug install        || exit 1
