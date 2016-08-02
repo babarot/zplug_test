@@ -45,39 +45,25 @@ __zplug::io::log::with_json()
 
 __zplug::io::log::level()
 {
-    # https://tools.ietf.org/html/rfc5424
-    #
-    # Numerical         Severity
-    #    Code
-    #
-    #      0       Emergency: system is unusable
-    #      1       Alert: action must be taken immediately
-    #      2       Critical: critical conditions
-    #      3       Error: error conditions
-    #      4       Warning: warning conditions
-    #      5       Notice: normal but significant condition
-    #      6       Informational: informational messages
-    #      7       Debug: debug-level messages
-
     local    level="${(U)1:-"INFO"}" log_level
     local -i part="${2:-2}"
     local -A syslog_code
 
+    # https://tools.ietf.org/html/rfc5424
     syslog_code=(
-    ''      '0:Emergency:system is unusable'
-    ''      '1:Alert:action must be taken immediately'
-    ''      '2:Critical:critical conditions'
-    'ERROR' '3:Error:error conditions'
-    'WARN'  '4:Warning:warning conditions'
-    ''      '5:Notice:normal but significant condition'
-    'INFO'  '6:Informational:informational messages'
-    ''      '7:Debug:debug-level messages'
+    ''       '0:Emergency:system is unusable'
+    ''       '1:Alert:action must be taken immediately'
+    ''       '2:Critical:critical conditions'
+    'ERROR'  '3:Error:error conditions'
+    'WARN'   '4:Warning:warning conditions'
+    ''       '5:Notice:normal but significant condition'
+    'INFO'   '6:Informational:informational messages'
+    'DEBUG'  '7:Debug:debug-level messages'
     )
 
     if (( ! $+syslog_code[$level] )); then
         level="INFO"
     fi
-
     if (( $part > 3 )); then
         part=0
     fi
@@ -91,11 +77,10 @@ __zplug::io::log::level()
 
 __zplug::io::log::save()
 {
-    local level
+    local level="${1:-"ERROR"}"
 
     # Spit out the log as "ERROR" by default
-    __zplug::io::log::level \
-        "${1:-"ERROR"}" \
+    __zplug::io::log::level "$level" \
         | read level
 
     __zplug::io::log::with_json "$level" \
