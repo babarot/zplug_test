@@ -49,7 +49,7 @@ __zplug::utils::git::clone()
             --recursive \
             ${=depth_option} \
             "$url_format" "$tags[dir]" \
-            2> >(__zplug::io::report::save) >/dev/null
+            2> >(__zplug::io::log::save) >/dev/null
     fi
 
     # The revison (hash/branch/tag) lock
@@ -89,7 +89,7 @@ __zplug::utils::git::checkout()
     fi
 
     git checkout -q "$tags[at]" \
-        2> >(__zplug::io::report::save) >/dev/null
+        2> >(__zplug::io::log::save) >/dev/null
     if (( $status != 0 )); then
         __zplug::io::print::f \
             --die \
@@ -129,7 +129,7 @@ __zplug::utils::git::merge()
             git fetch
         fi
         git checkout -q "$git[branch]"
-    } 2> >(__zplug::io::report::save) >/dev/null
+    } 2> >(__zplug::io::log::save) >/dev/null
 
     git[local]="$(git rev-parse HEAD)"
     git[upstream]="$(git rev-parse "@{upstream}")"
@@ -144,7 +144,7 @@ __zplug::utils::git::merge()
         {
             git merge --ff-only "origin/$git[branch]"
             git submodule update --init --recursive
-        } 2> >(__zplug::io::report::save) >/dev/null
+        } 2> >(__zplug::io::log::save) >/dev/null
         return $status
 
     elif [[ $git[upstream] == $git[base] ]]; then
@@ -256,7 +256,7 @@ __zplug::utils::git::get_remote_state()
                 origin_head="${$(git ls-remote origin HEAD)[1]}"
 
                 git rev-parse -q "$origin_head" \
-                    2> >(__zplug::io::report::save) >/dev/null
+                    2> >(__zplug::io::log::save) >/dev/null
                 if (( $status != 0 )); then
                     state="local out of date"
                 elif (( $ahead > 0 )); then

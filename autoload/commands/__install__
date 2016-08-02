@@ -43,7 +43,7 @@ done
         # Case of existing not installed repos
         __zplug::core::core::run_interfaces \
             "check" \
-            2> >(__zplug::io::report::save) >/dev/null \
+            2> >(__zplug::io::log::save) >/dev/null \
             || repos=( "${reply[@]}" )
     fi
 
@@ -71,7 +71,7 @@ do
     # Skip items
     {
         if [[ -n $tags[if] ]]; then
-            if ! eval "$tags[if]" 2> >(__zplug::io::report::save) >/dev/null; then
+            if ! eval "$tags[if]" 2> >(__zplug::io::log::save) >/dev/null; then
                 __zplug::io::print::put \
                     "$fg[red]-$reset_color $fg[green]$repo$reset_color: skipped due to if tag\n"
                 continue

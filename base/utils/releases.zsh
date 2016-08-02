@@ -13,7 +13,7 @@ __zplug::utils::releases::get_latest()
     fi
 
     eval "$cmd $url" \
-        2> >(__zplug::io::report::save) \
+        2> >(__zplug::io::log::save) \
         | grep -o '/'"$repo"'/releases/download/[^"]*' \
         | awk -F/ '{print $6}' \
         | sort \
@@ -108,7 +108,7 @@ __zplug::utils::releases::get_url()
     candidates=(
     ${(@f)"$(
     eval "$cmd $url" \
-        2> >(__zplug::io::report::save) \
+        2> >(__zplug::io::log::save) \
         | grep -o '/'"$repo"'/releases/download/[^"]*'
     )"}
     )
@@ -167,12 +167,12 @@ __zplug::utils::releases::get()
 
     # Grab artifact from G-R
     eval "$cmd $url" \
-        2> >(__zplug::io::report::save) >/dev/null
+        2> >(__zplug::io::log::save) >/dev/null
 
     __zplug::utils::releases::index \
         "$repo" \
         "$artifact" \
-        2> >(__zplug::io::report::save) >/dev/null &&
+        2> >(__zplug::io::log::save) >/dev/null &&
         echo "$header" >"$tags[dir]/INDEX"
     )
 
@@ -187,12 +187,12 @@ __zplug::utils::releases::index()
 
     case "$artifact" in
         *.zip)
-            unzip "$artifact" 2> >(__zplug::io::report::save) >/dev/null
-            rm -f "$artifact" 2> >(__zplug::io::report::save) >/dev/null
+            unzip "$artifact" 2> >(__zplug::io::log::save) >/dev/null
+            rm -f "$artifact" 2> >(__zplug::io::log::save) >/dev/null
             ;;
         *.tar.gz|*.tgz)
-            tar xvf "$artifact" 2> >(__zplug::io::report::save) >/dev/null
-            rm -f "$artifact"   2> >(__zplug::io::report::save) >/dev/null
+            tar xvf "$artifact" 2> >(__zplug::io::log::save) >/dev/null
+            rm -f "$artifact"   2> >(__zplug::io::log::save) >/dev/null
             ;;
         *.*)
             __zplug::io::print::die \
@@ -221,7 +221,7 @@ __zplug::utils::releases::index()
         mv -f "$binaries[1]" "$cmd"
         chmod 755 "$cmd"
         rm -rf *~"$cmd"(N)
-    } 2> >(__zplug::io::report::save) >/dev/null
+    } 2> >(__zplug::io::log::save) >/dev/null
 
     if [[ ! -x $cmd ]]; then
         __zplug::io::print::die \

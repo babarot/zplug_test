@@ -1,9 +1,9 @@
-T_SUB "__zplug::io::report::write" ((
+T_SUB "__zplug::io::log::write" ((
   # skip
 ))
-T_SUB "__zplug::io::report::with_json" ((
+T_SUB "__zplug::io::log::with_json" ((
   # skip
 ))
-T_SUB "__zplug::io::report::save" ((
+T_SUB "__zplug::io::log::save" ((
   # skip
 ))

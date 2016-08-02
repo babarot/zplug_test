@@ -1,94 +1,80 @@
-__zplug::io::logger::ink()
+# https://tools.ietf.org/html/rfc5424
+#
+# Numerical         Severity
+#    Code
+#
+#      0       Emergency: system is unusable
+#      1       Alert: action must be taken immediately
+#      2       Critical: critical conditions
+#      3       Error: error conditions
+#      4       Warning: warning conditions
+#      5       Notice: normal but significant condition
+#      6       Informational: informational messages
+#      7       Debug: debug-level messages
+
+typeset -gx -A _zplug_log_level
+_zplug_log_level=(
+''      '0:Emergency:system is unusable'
+''      '1:Alert:action must be taken immediately'
+''      '2:Critical:critical conditions'
+'ERROR' '3:Error:error conditions'
+'WARN'  '4:Warning:warning conditions'
+''      '5:Notice:normal but significant condition'
+'INFO'  '6:Informational:informational messages'
+''      '7:Debug:debug-level messages'
+)
+
+__zplug::io::log::with_json()
 {
-    local    color is_bold=false
-    local -i tty=1
-    local -a text
+    # Variables for error report
+    # - $funcfiletrace[@]
+    # - $funcsourcetrace[@]
+    # - $funcstack[@]
+    # - $functrace[@]
 
-    while (( $# > 0 ))
-    do
-        case "$1" in
-            --color)
-                if [[ ! $2 =~ ^(black|blue|cyan|default|green|grey|magenta|red|white|yellow)$ ]]; then
-                    __zplug::io::print::f \
-                        --die \
-                        --zplug \
-                        "$2: must be a color\n"
-                    return 1
-                fi
-                color="$2"; shift
-                ;;
-            --bold)
-                is_bold=true
-                ;;
-            --tty)
-                if [[ $2 != <-> ]]; then
-                    __zplug::io::print::f \
-                        --die \
-                        --zplug \
-                        "$2: must be an interger\n"
-                    return 1
-                fi
-                tty="$2"; shift
-                ;;
-            *)
-                text+=("$1")
-                ;;
-        esac
-        shift
-    done
+    local -i i
+    local -a message
+    local    date
 
-    if $is_bold; then
-        color="$fg_bold[$color]"
-    else
-        color="$fg_no_bold[$color]"
+    # Assume the stdin that should be discarded to /dev/null
+    message=( ${(@f)"$(<&0)"} )
+    if (( $#message == 0 )); then
+        return 1
     fi
 
-    case $tty in
-        1)
-            __zplug::io::print::put "${color}${text}${reset_color}"
-            ;;
-        2)
-            __zplug::io::print::die "${color}${text}${reset_color}"
-            ;;
-    esac
+    # https://tools.ietf.org/html/rfc3339#section-5.6
+    date="$(date +%FT%T%z | sed -E 's/(.*)([0-9][0-9])([0-9][0-9])/\1\2:\3/')"
+
+    # Spit out to JSON
+    printf '{'
+    printf '"pid": %d,' "$$"
+    printf '"shlvl": %d,' "$SHLVL"
+    printf '"date": "%s",' "$date"
+    printf '"dir": "%s",' "$PWD"
+    printf '"message": %s,' "${(qqq)message[*]}"
+    printf '"trace": {'
+    for ((i = 1; i < $#functrace; i++))
+    do
+        # With comma
+        printf '"%s": "%s",' \
+            "$functrace[$i]" \
+            "$funcstack[$i]"
+    done
+    # Without comma
+    printf '"%s": "%s"' \
+        "$functrace[$#functrace]" \
+        "$funcstack[$#funcstack]"
+    printf "}"
+    printf "}\n"
 }
 
-__zplug::io::logger::log()
+__zplug::io::log::report()
 {
-    local    state="$1" text="$2"
-    local    bold
-    local -i tty=1
+    :
+}
 
-    case "$state" in
-        TITLE)
-            color="yellow"
-            ;;
-        INFO)
-            color="blue"
-            ;;
-        FAIL | WARN)
-            color="red"
-            tty=2
-            ;;
-        ERROR)
-            color="red"
-            bold="--bold"
-            tty=2
-            ;;
-        PASS)
-            color="green"
-            ;;
-        SUCCESS)
-            bold="--bold"
-            color="green"
-            ;;
-        *)
-            text="$1"
-            ;;
-    esac
-
-    __zplug::print::log::ink --color white "["
-    __zplug::print::log::ink --color magenta --bold "$(date +%H:%M:%S)"
-    __zplug::print::log::ink --color white "]"
-    __zplug::print::log::ink --color "$color" --tty "$tty" $bold " $text"
+__zplug::io::log::save()
+{
+    __zplug::io::log::with_json \
+        | >>|"$ZPLUG_ERROR_LOG"
 }
