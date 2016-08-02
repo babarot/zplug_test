@@ -24,7 +24,7 @@ __zplug::io::report::with_json()
     printf '{'
     printf '"pid": %d,' "$$"
     printf '"level": %d,' "$SHLVL"
-    printf '"date": "%s",' "$(date +"%Y/%m/%d %T")"
+    printf '"date": "%s",' "$(date +%FT%T%z)"
     printf '"workd": "%s",' "$PWD"
     printf '"message": %s,' "${(qqq)message[*]}"
     printf '"trace": {'
