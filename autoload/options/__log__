@@ -11,6 +11,45 @@ if [[ ! -f $ZPLUG_ERROR_LOG ]] || [[ ! -s $ZPLUG_ERROR_LOG ]]; then
     return 1
 fi
 
-cat "$ZPLUG_ERROR_LOG" \
-    | sed -e 's/[[:cntrl:]]//g' \
-    | ${=PAGER:-less}
+local arg
+
+while (( $# > 0 ))
+do
+    arg="$1"
+    case "$arg" in
+        edit)
+            ${=EDITOR:-vim} "$ZPLUG_ERROR_LOG"
+            return $status
+            ;;
+        jq)
+            if (( ! $+commands[jq] )); then
+                return 1
+            fi
+            cat "$ZPLUG_ERROR_LOG" \
+                | sed -e 's/[[:cntrl:]]//g' \
+                | jq '.'
+            return $status
+            ;;
+        less | more)
+            if [[ $arg == 'pager' ]]; then
+                arg="less"
+            fi
+            cat "$ZPLUG_ERROR_LOG" \
+                | ${=PAGER:-$arg}
+            return $status
+            ;;
+        oneline | "")
+            ;;
+        *)
+            __zplug::io::print::f \
+                --die \
+                --zplug \
+                --func \
+                "$arg: invalid arguments\n"
+            return 1
+            ;;
+    esac
+    shift
+done
+
+cat "$ZPLUG_ERROR_LOG"

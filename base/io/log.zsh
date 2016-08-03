@@ -24,7 +24,6 @@ __zplug::io::log::with_json()
     printf '"pid": %d,' "$$"
     printf '"shlvl": %d,' "$SHLVL"
     printf '"level": "%s",' "$level"
-    printf '"date": "%s",' "$date"
     printf '"dir": "%s",' "$PWD"
     printf '"message": %s,' "${(qqq)message[*]}"
     printf '"trace": {'
@@ -39,7 +38,8 @@ __zplug::io::log::with_json()
     printf '"%s": "%s"' \
         "$functrace[$#functrace]" \
         "$funcstack[$#funcstack]"
-    printf "}"
+    printf "},"
+    printf '"date": "%s"' "$date"
     printf "}\n"
 }
 
@@ -89,7 +89,7 @@ __zplug::io::log::new()
                 level="$value"
                 ;;
             _)
-                args+=("$value")
+                args+=( "$value" )
         esac
     done
     level="$(__zplug::io::log::level "$level")"

@@ -57,19 +57,35 @@ __zplug::core::options::short()
 
 __zplug::core::options::long()
 {
-    local arg="${1:?}"; shift
-    local opt="${arg#--}"
+    local    key value
+    local -a args opts
+
+    __zplug::utils::shell::getopts "$argv[@]" \
+        | while read key value; \
+    do
+        case "$key" in
+            _)
+                args+=( "$value" )
+                ;;
+            *)
+                opts+=( "$key" )
+                args+=( "$value" )
+                ;;
+        esac
+    done
+
+    opt="$opts[1]"
 
     if [[ -f $ZPLUG_ROOT/autoload/options/__${opt}__ ]]; then
         __zplug::core::core::run_interfaces \
             "$opt" \
-            "$argv[@]"
+            "$args[@]"
         return $status
     else
         __zplug::io::print::f \
             --die \
             --zplug \
-            "$arg: no such option\n"
+            "$argv[1]: no such option\n"
         return 1
     fi
 }
