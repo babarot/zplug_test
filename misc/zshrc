@@ -96,28 +96,6 @@ zplug clear
 {
     zplug "willghatch/zsh-cdr", \
         depth:1
-
-    local -i line=0
-    local -A tags
-
-    tags[dir]="$(
-    __zplug::core::core::run_interfaces \
-        'dir' \
-        'willghatch/zsh-cdr'
-    )"
-    line="$(
-    GIT_PAGER= \
-        git \
-        --git-dir="$tags[dir]/.git" \
-        --work-tree="$tags[dir]" \
-        log \
-        --oneline \
-        | grep -c ''
-    )"
-
-    tests+=(
-    "[[ $line -eq 1 ]]"
-    )
 }
 
 # dir
@@ -224,6 +202,28 @@ zplug clear
 
 zplug install        || exit 1
 zplug load --verbose || exit 1
+
+# on (test case)
+{
+    local -i line=0
+    local -A tags
+
+    tags[dir]="$(
+    __zplug::core::core::run_interfaces \
+        'dir' \
+        'willghatch/zsh-cdr'
+    )"
+    line="$(
+    git \
+        --git-dir="$tags[dir]/.git" \
+        --work-tree="$tags[dir]" \
+        rev-list --count HEAD
+    )"
+
+    tests+=(
+    "[[ $line -eq 1 ]]"
+    )
+}
 
 ret=0
 for test in "$tests[@]"
