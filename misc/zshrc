@@ -105,15 +105,15 @@ zplug clear
         'dir' \
         'willghatch/zsh-cdr'
     )"
-
+    line="$(
     GIT_PAGER= \
         git \
         --git-dir="$tags[dir]/.git" \
         --work-tree="$tags[dir]" \
         log \
         --oneline \
-        | grep -c '' \
-        | read line
+        | grep -c ''
+    )"
 
     tests+=(
     "[[ $line -eq 1 ]]"
