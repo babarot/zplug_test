@@ -100,6 +100,9 @@ __zplug::utils::git::checkout()
     )
 }
 
+# TODO:
+# - __zplug::utils::git::fetch
+# - __zplug::utils::git::pull
 __zplug::utils::git::merge()
 {
     local    key value
@@ -180,6 +183,7 @@ __zplug::utils::git::status()
         "$repo"
     )"
 
+    # TODO: git rev-parse
     git \
         --git-dir="$tags[dir]/.git" \
         --work-tree="$tags[dir]" \
