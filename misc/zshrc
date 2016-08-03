@@ -116,7 +116,7 @@ zplug clear
         | read line
 
     tests+=(
-    '[[ $line -eq 1 ]]'
+    "[[ $line -eq 1 ]]"
     )
 }
 
