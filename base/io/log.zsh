@@ -8,7 +8,7 @@ __zplug::io::log::with_json()
 
     local -i i
     local -a message
-    local    date level="$1"
+    local    date level="${1:-"ERROR"}"
 
     # Assume the stdin that should be discarded to /dev/null
     message=( ${(@f)"$(<&0)"} )

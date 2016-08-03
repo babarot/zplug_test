@@ -94,7 +94,30 @@ zplug clear
 
 # depth
 {
-    :
+    zplug "willghatch/zsh-cdr", \
+        depth:1
+
+    local -i line=0
+    local -A tags
+
+    tags[dir]="$(
+    __zplug::core::core::run_interfaces \
+        'dir' \
+        'willghatch/zsh-cdr'
+    )"
+
+    GIT_PAGER= \
+        git \
+        --git-dir="$tags[dir]/.git" \
+        --work-tree="$tags[dir]" \
+        log \
+        --oneline \
+        | grep -c '' \
+        | read line
+
+    tests+=(
+    '[[ $line -eq 1 ]]'
+    )
 }
 
 # dir
