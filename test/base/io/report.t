@@ -4,6 +4,6 @@ T_SUB "__zplug::io::log::write" ((
 T_SUB "__zplug::io::log::with_json" ((
   # skip
 ))
-T_SUB "__zplug::io::log::save" ((
+T_SUB "__zplug::io::log::captcha" ((
   # skip
 ))

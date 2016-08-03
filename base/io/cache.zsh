@@ -17,7 +17,7 @@ __zplug::io::cache::load()
     $ZPLUG_USE_CACHE || return 2
 
     if [[ -f $ZPLUG_CACHE_FILE ]]; then
-        2> >(__zplug::io::log::save) >/dev/null \
+        2> >(__zplug::io::log::captcha) >/dev/null \
             diff -b \
             <( \
             awk \

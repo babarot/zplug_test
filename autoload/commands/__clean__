@@ -79,7 +79,7 @@ else
         __zplug::core::core::run_interfaces \
             'dir' \
             "$repo" \
-            2> >(__zplug::io::log::save)
+            2> >(__zplug::io::log::captcha)
         )"
         if [[ -d $tags[dir] ]]; then
             case "$tags[from]" in
@@ -110,7 +110,7 @@ do
     if ${(z)is_force:-"read -q"}; then
         rm -rf "$repo"
         rmdir "${repo:h}"
-    fi 2> >(__zplug::io::log::save) >/dev/null
+    fi 2> >(__zplug::io::log::captcha) >/dev/null
 
     __zplug::io::print::put "\n"
 done

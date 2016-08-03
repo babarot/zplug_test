@@ -75,14 +75,32 @@ __zplug::io::log::level()
     echo "${(U)log_level}"
 }
 
-__zplug::io::log::save()
+__zplug::io::log::new()
 {
-    local level="${1:-"ERROR"}"
+    local    key value
+    local    level="WARN"
+    local -a args
 
-    # Spit out the log as "ERROR" by default
-    __zplug::io::log::level "$level" \
-        | read level
+    __zplug::utils::shell::getopts "$argv[@]" \
+        | while read key value; \
+    do
+        case "$key" in
+            level)
+                level="$value"
+                ;;
+            _)
+                args+=("$value")
+        esac
+    done
+    level="$(__zplug::io::log::level "$level")"
 
-    __zplug::io::log::with_json "$level" \
+    echo "$args[@]" \
+        | __zplug::io::log::with_json "$level" \
+        | >>|"$ZPLUG_ERROR_LOG"
+}
+
+__zplug::io::log::captcha()
+{
+    __zplug::io::log::with_json "ERROR" \
         | >>|"$ZPLUG_ERROR_LOG"
 }

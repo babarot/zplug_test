@@ -149,7 +149,7 @@ __zplug::utils::shell::cd()
         fi
 
         builtin cd "$dir" \
-            2> >(__zplug::io::log::save) >/dev/null
+            2> >(__zplug::io::log::captcha) >/dev/null
         return $status
     done
 

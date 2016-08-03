@@ -65,7 +65,7 @@ __zplug::core::sources::call()
             eval "$val.zsh"
             unfunction "$val.zsh"
         } \
-            2> >(__zplug::io::log::save) >/dev/null
+            2> >(__zplug::io::log::captcha) >/dev/null
 
     fi
 }
