@@ -3,7 +3,11 @@ __zplug::sources::oh-my-zsh::check()
     local    repo="$1"
     local -A tags
 
-    tags[dir]="$(__zplug::core::core::run_interfaces 'dir' "$repo")"
+    tags[dir]="$(
+    __zplug::core::core::run_interfaces \
+        'dir' \
+        "$repo"
+    )"
 
     [[ -d $tags[dir]:h ]]
     return $status
