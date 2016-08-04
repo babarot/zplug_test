@@ -2,11 +2,11 @@
 # Description:
 #   Install packages in parallel
 
-local     repo arg f_pkg c_pkg
+local     repo arg
 local -aU repos
 local -A  tags
 local -a  failed_packages
-local -A  checked_packages
+local -A  from
 local -i  max=0
 local -F  SECONDS=0 start_time finish_time
 
@@ -84,14 +84,8 @@ do
         fi
     }
 
-    # For checking
-    if __zplug::core::sources::is_handler_defined "check" "$tags[from]"; then
-        checked_packages+=("$tags[name]" "$tags[from]")
-    elif [[ -n $tags[dir] ]]; then
-        checked_packages+=("$tags[name]" "$tags[dir]")
-    else
-        checked_packages+=("$tags[name]" "$ZPLUG_REPOS/$repo")
-    fi
+    # For checking whether the repo's installation is success
+    from+=( "$repo" "$tags[from]" )
 
     __zplug::job::spinner::lock
     __zplug::job::spinner::spin &
@@ -155,17 +149,17 @@ done
     __zplug::job::spinner::unlock
 
     failed_packages=()
-    for c_pkg in "${(k)checked_packages[@]}"
+    for repo in "${(k)from[@]}"
     do
-        if __zplug::core::sources::is_handler_defined "check" "$checked_packages[$c_pkg]"; then
-            if ! __zplug::core::sources::use_handler "check" "$checked_packages[$c_pkg]" "$c_pkg"; then
-                failed_packages+=( "$c_pkg" )
+        if __zplug::core::sources::is_handler_defined "check" "$from[$repo]"; then
+            if ! __zplug::core::sources::use_handler "check" "$from[$repo]" "$repo"; then
+                failed_packages+=( "$repo" )
             fi
         fi
     done
 
     # Skip footer prints
-    if (( $#checked_packages == 0 )); then
+    if (( $#from == 0 )); then
         __zplug::io::print::f \
             --zplug \
             "No package to install\n"

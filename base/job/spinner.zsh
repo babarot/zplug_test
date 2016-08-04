@@ -1,8 +1,8 @@
-typeset -g spin_file="/tmp/.spin.$$$RANDOM"
+typeset -g _zplug_spin_file="/tmp/._zplug_spin_file.$$$RANDOM"
 
 __zplug::job::spinner::is_spin()
 {
-    [[ -f $spin_file ]]
+    [[ -f $_zplug_spin_file ]]
     return $status
 }
 
@@ -11,14 +11,14 @@ __zplug::job::spinner::lock()
     __zplug::job::spinner::is_spin && return 1
 
     set +m
-    touch $spin_file
+    touch "$_zplug_spin_file"
 }
 
 __zplug::job::spinner::unlock()
 {
     __zplug::job::spinner::is_spin || return 1
 
-    rm -f "$spin_file"
+    rm -f "$_zplug_spin_file"
 }
 
 __zplug::job::spinner::spin()
