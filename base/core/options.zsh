@@ -89,3 +89,14 @@ __zplug::core::options::long()
         return 1
     fi
 }
+
+__zplug::core::options::unknown()
+{
+    local arg="$1"
+
+    __zplug::io::print::f \
+        --die \
+        --zplug \
+        "$arg: unknown option\n"
+    return 1
+}

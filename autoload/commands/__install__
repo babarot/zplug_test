@@ -15,11 +15,8 @@ do
     arg="$1"
     case "$arg" in
         -*|--*)
-            __zplug::io::print::f \
-                --die \
-                --zplug \
-                "$arg: unknown option\n"
-            return 1
+            __zplug::core::options::unknown "$arg"
+            return $status
             ;;
         "")
             # Invalid

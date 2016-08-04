@@ -16,12 +16,8 @@ do
             is_select=true
             ;;
         -*|--*)
-            __zplug::io::print::f \
-                --die \
-                --zplug \
-                --func \
-                "$arg: unknown option\n"
-            return 1
+            __zplug::core::options::unknown "$arg"
+            return $status
             ;;
         "")
             # Invalid
