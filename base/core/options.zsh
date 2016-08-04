@@ -48,11 +48,8 @@ __zplug::core::options::parse()
 
 __zplug::core::options::short()
 {
-    __zplug::io::print::f \
-        --die \
-        --zplug \
-        "$arg: no such option\n"
-    return 1
+    __zplug::core::options::unknown "$arg"
+    return $status
 }
 
 __zplug::core::options::long()
@@ -82,11 +79,8 @@ __zplug::core::options::long()
             "$args[@]"
         return $status
     else
-        __zplug::io::print::f \
-            --die \
-            --zplug \
-            "$argv[1]: no such option\n"
-        return 1
+        __zplug::core::options::unknown "$argv[1]"
+        return $status
     fi
 }
 
