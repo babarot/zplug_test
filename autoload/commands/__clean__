@@ -104,24 +104,22 @@ do
         "${${is_force:+"Removed"}:-"Remove? (y/N)"} ${(qq)repo} "
 
     if ${(z)is_force:-"read -q"}; then
+        # Remove directories
         rm -rf "$repo"
         rmdir "${repo:h}"
-    fi 2> >(__zplug::io::log::captcha) >/dev/null
+        # Clear cache
+        __zplug::core::core::run_interfaces 'clear'
+    fi \
+        2> >(__zplug::io::log::captcha) >/dev/null
 
     __zplug::io::print::put "\n"
 done
 
 # Remove packages from $zplugs
-for repo in "${(k)zplugs[@]}"
+__zplug::core::core::run_interfaces 'check'
+for repo in "${reply[@]}"
 do
-    tags[dir]="$(
-    __zplug::core::core::run_interfaces \
-        'dir' \
-        "$repo"
-    )"
-    if [[ ! -d $tags[dir] ]]; then
-        unset "zplugs[$repo]"
-    fi
+    unset "zplugs[$repo]"
 done
 
 return $ret
