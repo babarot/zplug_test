@@ -3,7 +3,7 @@ __zplug::utils::git::clone()
     local    repo="${1:?}"
     local    depth_option url_format
     local -i ret=1
-    local -A tags
+    local -A tags default_tags
 
     # A validation of ZPLUG_PROTOCOL
     # - HTTPS (recommended)
@@ -28,7 +28,11 @@ __zplug::utils::git::clone()
 
     # If an 'at' tag has been specified, do a deep clone to allow any commit to be
     # checked out.
-    if [[ -n $tags[at] ]]; then
+    default_tags[at]="$(
+    __zplug::core::core::run_interfaces \
+        'at'
+    )"
+    if [[ $tags[at] != $default_tags[at] ]]; then
         depth_option=""
     fi
 
