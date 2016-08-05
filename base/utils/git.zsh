@@ -26,6 +26,12 @@ __zplug::utils::git::clone()
         depth_option="--depth=$tags[depth]"
     fi
 
+    # If an 'at' tag has been specified, do a deep clone to allow any commit to be
+    # checked out.
+    if [[ -n $tags[at] ]]; then
+        depth_option=""
+    fi
+
     # Assemble a URL for cloning from its handler
     if __zplug::core::sources::is_handler_defined "get_url" "$tags[from]"; then
         __zplug::core::sources::use_handler \
