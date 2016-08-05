@@ -82,6 +82,17 @@ __zplug::sources::github::load_plugin()
     tags=( "${reply[@]}" )
     default_tags[use]="$(__zplug::core::core::run_interfaces 'use' "$repo")"
 
+    echo "$repo:$tags[lazy]"
+    # If that is an autoload plugin
+    if (( $_zplug_boolean_true[(I)$tags[lazy]] )); then
+        if [[ -n $tags[use] ]]; then
+            load_patterns+=( "$tags[dir]"/$tags[use](N.) )
+            load_fpaths+=( "$tags[dir]"/$tags[use]:h(N/) )
+        else
+            load_patterns+=( "$tags[dir]/autoload"/*(N.) )
+            load_fpaths+=( "$tags[dir]/autoload"(N/) )
+        fi
+    else
     # Default load behavior for plugins
     plugins_ext=("plugin.zsh" "zsh-theme" "theme-zsh")
     themes_ext=("zsh-theme" "theme-zsh")
@@ -129,15 +140,10 @@ __zplug::sources::github::load_plugin()
                 fi
                 # Add the parent directory to fpath
                 load_fpaths+=( $tags[dir]/$tags[use]/_*(N.:h) )
-
-                # If that is an autoload plugin
-                if (( $_zplug_boolean_true[(I)$tags[lazy]] )); then
-                    load_patterns+=( "$tags[dir]/autoload"/*(N.) )
-                    load_fpaths+=( "$tags[dir]/autoload"(N/) )
-                fi
             fi
         fi
     done
+    fi
 
     if [[ $tags[nice] -gt 9 ]]; then
         # the order of loading of plugin files
