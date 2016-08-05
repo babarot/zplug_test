@@ -243,10 +243,11 @@ do
 done
 
 echo "============================="
-while read line
-do
-    echo "[DEBUG] ${(q)line}"
-done <"$ZPLUG_CACHE_FILE"
+#while read line
+#do
+#    echo "[DEBUG] ${(q)line}"
+#done <"$ZPLUG_CACHE_FILE"
+cat "$ZPLUG_CACHE_FILE"
 echo "============================="
 
 exit $ret
