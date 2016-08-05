@@ -151,7 +151,14 @@ zplug clear
 
 # lazy
 {
-    :
+    zplug "mollifier/zload", \
+        lazy:true, \
+        use:"zload"
+
+    tests+=(
+    '(( $+functions[zload] ))'
+    'grep -q "autoload.*zload" $ZPLUG_CACHE_FILE'
+    )
 }
 
 # nice
