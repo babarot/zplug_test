@@ -245,7 +245,7 @@ done
 echo "============================="
 while read line
 do
-    echo "[DEBUG] $line"
+    echo "[DEBUG] ${(q)line}"
 done <"$ZPLUG_CACHE_FILE"
 echo "============================="
 
