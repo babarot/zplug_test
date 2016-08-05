@@ -157,7 +157,6 @@ zplug clear
 
     tests+=(
     '(( $+functions[zload] ))'
-    'grep -q "autoload.*zload" $ZPLUG_CACHE_FILE'
     )
 }
 
@@ -241,13 +240,5 @@ do
         ret=1
     fi
 done
-
-echo "============================="
-#while read line
-#do
-#    echo "[DEBUG] ${(q)line}"
-#done <"$ZPLUG_CACHE_FILE"
-cat "$ZPLUG_CACHE_FILE"
-echo "============================="
 
 exit $ret
