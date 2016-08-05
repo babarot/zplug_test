@@ -4,9 +4,6 @@ T_SUB "__zplug::core::core::get_interfaces" ((
 T_SUB "__zplug::core::core::run_interfaces" ((
   # skip
 ))
-T_SUB "__zplug::core::core::reload" ((
-  # skip
-))
 T_SUB "__zplug::core::core::prepare" ((
   # skip
 ))

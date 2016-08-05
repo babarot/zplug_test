@@ -10,3 +10,6 @@ T_SUB "__zplug::core::options::short" ((
 T_SUB "__zplug::core::options::long" ((
   # skip
 ))
+T_SUB "__zplug::core::options::unknown" ((
+  # skip
+))
