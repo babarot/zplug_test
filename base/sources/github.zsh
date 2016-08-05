@@ -82,7 +82,6 @@ __zplug::sources::github::load_plugin()
     tags=( "${reply[@]}" )
     default_tags[use]="$(__zplug::core::core::run_interfaces 'use' "$repo")"
 
-    echo "$repo:$tags[lazy]"
     # If that is an autoload plugin
     if (( $_zplug_boolean_true[(I)$tags[lazy]] )); then
         if [[ -n $tags[use] ]]; then

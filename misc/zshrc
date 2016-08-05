@@ -242,4 +242,11 @@ do
     fi
 done
 
+echo "============================="
+while read line
+do
+    echo "[DEBUG] $line"
+done <"$ZPLUG_CACHE_FILE"
+echo "============================="
+
 exit $ret
