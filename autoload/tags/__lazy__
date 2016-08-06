@@ -8,11 +8,8 @@ local    lazy
 local    default="no"
 
 if [[ -n $arg ]] && ! __zplug::base::base::zpluged "$arg"; then
-    __zplug::io::print::f \
-        --die \
-        --zplug \
-        --func \
-        "$arg: no package managed by zplug\n"
+    __zplug::io::log::error \
+        "$arg: no package managed by zplug"
     return 1
 fi
 

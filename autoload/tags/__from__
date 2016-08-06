@@ -9,11 +9,8 @@ local    default="github"
 local -a candidates
 
 if [[ -n $arg ]] && ! __zplug::base::base::zpluged "$arg"; then
-    __zplug::io::print::f \
-        --die \
-        --zplug \
-        --func \
-        "'$arg' is not a managed package\n"
+    __zplug::io::log::error \
+        "$arg: no package managed by zplug"
     return 1
 fi
 
