@@ -40,6 +40,8 @@ __zplug::utils::awk::path()
     done
 
     if [[ $awk == "" || $variant == "mawk" ]]; then
+        __zplug::io::log::warn \
+            "gawk or nawk is not found"
         return 1
     fi
 
@@ -48,6 +50,8 @@ __zplug::utils::awk::path()
 
 __zplug::utils::awk::available()
 {
+    local awk_path
+
     __zplug::utils::awk::path \
         | read awk_path
 

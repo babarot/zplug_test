@@ -22,6 +22,8 @@ __zplug::io::print::f()
     local \
         is_end_specified=false \
         is_per_specified=false
+    local \
+        is_log=false
 
     if (( $argv[(I)--] )); then
         is_end_specified=true
@@ -38,6 +40,7 @@ __zplug::io::print::f()
                 fd=1
                 ;;
             --die | -2)
+                is_log=true
                 fd=2
                 ;;
             --func)
@@ -133,4 +136,9 @@ __zplug::io::print::f()
             done
         fi
     } >&$fd
+
+    if $is_log; then
+        __zplug::io::log::error \
+            "${(q)texts[@]}"
+    fi
 }

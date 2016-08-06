@@ -109,6 +109,7 @@ __zplug::io::log::info()
 {
     __zplug::io::log::new \
         --level="INFO" \
+        -- \
         "$argv[@]"
 }
 
@@ -116,6 +117,7 @@ __zplug::io::log::warn()
 {
     __zplug::io::log::new \
         --level="WARN" \
+        -- \
         "$argv[@]"
 }
 
@@ -123,5 +125,6 @@ __zplug::io::log::error()
 {
     __zplug::io::log::new \
         --level="ERROR" \
+        -- \
         "$argv[@]"
 }

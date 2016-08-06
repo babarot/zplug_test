@@ -13,7 +13,7 @@ __zplug::core::arguments::exec()
 
     # Fuzzy match
     if ! __zplug::core::arguments::auto_correct "$arg"; then
-        return $status
+        return 1
     fi
 
     zplug "$reply[1]" ${2:+"$argv[2,-1]"}
