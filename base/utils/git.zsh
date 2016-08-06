@@ -221,7 +221,7 @@ __zplug::utils::git::get_head_branch_name()
         git rev-parse --short HEAD
         return 1
     fi
-    __zplug::io::print::put "$head_branch\n"
+    printf "$head_branch\n"
 }
 
 __zplug::utils::git::get_remote_name()
@@ -230,10 +230,8 @@ __zplug::utils::git::get_remote_name()
 
     remote_name="$(git config branch.${branch}.remote)"
     if [[ -z $remote_name ]]; then
-        __zplug::io::print::f \
-            --die \
-            --zplug \
-            "no remote repository\n"
+        __zplug::io::log::warn \
+            "no remote repository"
         return 1
     fi
 
@@ -318,7 +316,7 @@ __zplug::utils::git::get_state()
             ;;
     esac
 
-    __zplug::io::print::put "($state) '${url:-?}'\n"
+    printf "($state) '${url:-?}'\n"
 }
 
 __zplug::utils::git::remote_url()

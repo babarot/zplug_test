@@ -5,11 +5,8 @@ __zplug::core::self::init()
     local dst="$ZPLUG_HOME/init.zsh"
 
     if [[ ! -f $src ]]; then
-        __zplug::io::print::f \
-            --func \
-            --die \
-            --zplug \
-            "$src: no such file or directory\n"
+        __zplug::io::log::error \
+            "$src: no such file or directory"
         return 1
     fi
 

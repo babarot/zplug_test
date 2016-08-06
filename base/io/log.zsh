@@ -104,3 +104,24 @@ __zplug::io::log::captcha()
     __zplug::io::log::with_json "ERROR" \
         | >>|"$ZPLUG_ERROR_LOG"
 }
+
+__zplug::io::log::info()
+{
+    __zplug::io::log::new \
+        --level="INFO" \
+        "$argv[@]"
+}
+
+__zplug::io::log::warn()
+{
+    __zplug::io::log::new \
+        --level="WARN" \
+        "$argv[@]"
+}
+
+__zplug::io::log::error()
+{
+    __zplug::io::log::new \
+        --level="ERROR" \
+        "$argv[@]"
+}

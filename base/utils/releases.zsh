@@ -187,16 +187,20 @@ __zplug::utils::releases::index()
 
     case "$artifact" in
         *.zip)
-            unzip "$artifact" 2> >(__zplug::io::log::captcha) >/dev/null
-            rm -f "$artifact" 2> >(__zplug::io::log::captcha) >/dev/null
+            {
+                unzip "$artifact"
+                rm -f "$artifact"
+            } 2> >(__zplug::io::log::captcha) >/dev/null
             ;;
         *.tar.gz|*.tgz)
-            tar xvf "$artifact" 2> >(__zplug::io::log::captcha) >/dev/null
-            rm -f "$artifact"   2> >(__zplug::io::log::captcha) >/dev/null
+            {
+                tar xvf "$artifact"
+                rm -f "$artifact"
+            } 2> >(__zplug::io::log::captcha) >/dev/null
             ;;
         *.*)
-            __zplug::io::print::die \
-                "$artifact: Unknown extension format\n"
+            __zplug::io::log::error \
+                "$artifact: Unknown extension format"
             return 1
             ;;
         *)
@@ -212,8 +216,8 @@ __zplug::utils::releases::index()
     )
 
     if (( $#binaries == 0 )); then
-        __zplug::io::print::die \
-            "$cmd: Failed to grab binaries from GitHub Releases\n"
+        __zplug::io::log::error \
+            "$cmd: Failed to grab binaries from GitHub Releases"
         return 1
     fi
 

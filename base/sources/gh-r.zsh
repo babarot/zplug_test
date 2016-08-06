@@ -51,12 +51,6 @@ __zplug::sources::gh-r::update()
         "$repo"
     )"
 
-    # EXIT CODE
-    # 0: Updated successfully
-    # 1: Failed to update
-    # 2: Repo is not found
-    # 3: Repo has frozen tag
-    # 4: Up-to-date
     if [[ -d $tags[dir] ]]; then
         # Update
         if [[ -f $tags[dir]/INDEX ]]; then

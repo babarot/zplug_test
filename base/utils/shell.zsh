@@ -102,7 +102,7 @@ __zplug::utils::shell::sudo()
     local pw="$ZPLUG_SUDO_PASSWORD"
 
     if [[ -z $pw ]]; then
-        __zplug::print::die \
+        __zplug::io::log::error \
             "ZPLUG_SUDO_PASSWORD: is an invalid value\n"
         return 1
     fi
