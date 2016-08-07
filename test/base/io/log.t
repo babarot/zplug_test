@@ -7,6 +7,6 @@ T_SUB "__zplug::io::log::level" ((
 T_SUB "__zplug::io::log::new" ((
   # skip
 ))
-T_SUB "__zplug::io::log::captcha" ((
+T_SUB "__zplug::io::log::capture" ((
   # skip
 ))

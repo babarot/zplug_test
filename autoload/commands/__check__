@@ -42,7 +42,7 @@ do
     __zplug::core::core::run_interfaces \
         'from' \
         "$repo" \
-        2> >(__zplug::io::log::captcha)
+        2> >(__zplug::io::log::capture)
     )"
     if [[ -z "$tags[from]" ]]; then
         not_installed_repos+=( "$repo" )

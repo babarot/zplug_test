@@ -92,7 +92,7 @@ do
 
         # IF tag
         if [[ -n $tags[if] ]]; then
-            if ! eval "$tags[if]" 2> >(__zplug::io::log::captcha) >/dev/null; then
+            if ! eval "$tags[if]" 2> >(__zplug::io::log::capture) >/dev/null; then
                 $is_verbose && __zplug::io::print::die "$tags[name]: (not loaded)\n"
                 continue
             fi
@@ -165,7 +165,7 @@ do
     if [[ -n $tags[ignore] ]]; then
         ignore_patterns=( $(
         zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo ${tags[dir]}/${~tags[ignore]}" \
-            2> >(__zplug::io::log::captcha)
+            2> >(__zplug::io::log::capture)
         )(N) )
         for ignore in "${ignore_patterns[@]}"
         do

@@ -75,7 +75,7 @@ else
         __zplug::core::core::run_interfaces \
             'dir' \
             "$repo" \
-            2> >(__zplug::io::log::captcha)
+            2> >(__zplug::io::log::capture)
         )"
         if [[ -d $tags[dir] ]]; then
             case "$tags[from]" in
@@ -110,7 +110,7 @@ do
         # Clear cache
         __zplug::core::core::run_interfaces 'clear'
     fi \
-        2> >(__zplug::io::log::captcha) >/dev/null
+        2> >(__zplug::io::log::capture) >/dev/null
 
     __zplug::io::print::put "\n"
 done

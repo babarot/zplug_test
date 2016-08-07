@@ -11,7 +11,7 @@ __zplug::sources::local::check()
     # Note: $tags[dir] can be a dir name or a file name
     expanded_paths=( $(
     zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo ${tags[dir]}" \
-        2> >(__zplug::io::log::captcha)
+        2> >(__zplug::io::log::capture)
     ) )
 
     # Okay if at least one expanded path exists
@@ -41,7 +41,7 @@ __zplug::sources::local::load_plugin()
 
     expanded_paths=( $(
     zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo ${tags[dir]}" \
-        2> >(__zplug::io::log::captcha)
+        2> >(__zplug::io::log::capture)
     ) )
 
     for expanded_path in "${expanded_paths[@]}"
@@ -52,7 +52,7 @@ __zplug::sources::local::load_plugin()
             if [[ -n $tags[use] ]]; then
                 load_plugins+=( $(
                 zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo $expanded_path/$tags[use]" \
-                    2> >(__zplug::io::log::captcha)
+                    2> >(__zplug::io::log::capture)
                 ) )
             else
                 load_fpaths+=(
@@ -90,7 +90,7 @@ __zplug::sources::local::load_command()
 
     expanded_paths=( $(
     zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo $tags[dir]" \
-        2> >(__zplug::io::log::captcha)
+        2> >(__zplug::io::log::capture)
     ) )
     dst=${${tags[rename-to]:+$ZPLUG_HOME/bin/$tags[rename-to]}:-"$ZPLUG_HOME/bin"}
 
@@ -102,7 +102,7 @@ __zplug::sources::local::load_command()
             if [[ -n $tags[use] ]]; then
                 load_commands+=( $(
                 zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo $expanded_path/$tags[use]" \
-                    2> >(__zplug::io::log::captcha)
+                    2> >(__zplug::io::log::capture)
                 ) )
             else
                 load_fpaths+=(

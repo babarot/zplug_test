@@ -99,7 +99,7 @@ __zplug::io::log::new()
         | >>|"$ZPLUG_ERROR_LOG"
 }
 
-__zplug::io::log::captcha()
+__zplug::io::log::capture()
 {
     __zplug::io::log::with_json "ERROR" \
         | >>|"$ZPLUG_ERROR_LOG"

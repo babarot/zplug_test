@@ -119,7 +119,7 @@ __zplug::sources::github::load_plugin()
                 # For brace
                 load_patterns+=( $(
                 zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo $tags[dir]/$tags[use](N.)" \
-                    2> >(__zplug::io::log::captcha)
+                    2> >(__zplug::io::log::capture)
                 ) )
             fi
             # Add the parent directory to fpath
@@ -134,7 +134,7 @@ __zplug::sources::github::load_plugin()
                     # For brace
                     load_patterns+=( $(
                     zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo $tags[dir]/$tags[use]/$default_tags[use](N.)" \
-                        2> >(__zplug::io::log::captcha)
+                        2> >(__zplug::io::log::capture)
                     ) )
                 fi
                 # Add the parent directory to fpath
@@ -221,7 +221,7 @@ __zplug::sources::github::load_command()
         # expand to "$ZPLUG_REPOS/b4b4r07/sample/mycmd1"
         #           "$ZPLUG_REPOS/b4b4r07/sample/sample"
         zsh -c "$_ZPLUG_CONFIG_SUBSHELL; echo ${tags[dir]}/${tags[use]}" \
-            2> >(__zplug::io::log::captcha)
+            2> >(__zplug::io::log::capture)
         ) )
         for src in "${sources[@]}"
         do
