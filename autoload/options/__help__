@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 # Description:
 #   Display the help message
 
@@ -15,6 +15,8 @@ do
     case "$arg" in
         -*|--*)
             break
+            ;;
+        "")
             ;;
         *)
             fs=( "$(echo $ZPLUG_HOME/doc/man/man(1|5)/(zplug-|)${arg}.(1|5)(N))" )

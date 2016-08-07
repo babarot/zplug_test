@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 # Description:
 #   Source installed plugins and add installed commands to $PATH
 

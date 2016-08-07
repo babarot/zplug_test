@@ -160,8 +160,9 @@ case $state in
             'more'
         compadd -J 'log/edit' -X "%F{yellow}Completing%f %Bwith editor%b" \
             'edit'
-        compadd -J 'log/oneline' -X "%F{yellow}Completing%f %Bwith oneline%b" \
-            'oneline'
+        compadd -J 'log/log' -X "%F{yellow}Completing%f %Bwith log%b" \
+            'oneline' \
+            'clear'
 esac
 
 return ret

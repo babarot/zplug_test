@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 # Description:
 #   Show the report of zplug errors
 
@@ -39,6 +39,10 @@ do
             return $status
             ;;
         oneline | "")
+            ;;
+        clear)
+            rm -f "$ZPLUG_ERROR_LOG"
+            return $status
             ;;
         *)
             __zplug::io::print::f \

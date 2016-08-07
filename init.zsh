@@ -28,5 +28,5 @@ if ! __zplug::core::core::prepare; then
     return 1
 fi
 
-# Load external file of zplug
+# Load the external file of zplug
 __zplug::io::file::load
